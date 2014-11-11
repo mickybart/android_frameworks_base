@@ -737,6 +737,7 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
             // the final state of the color fade animation.
             boolean isOn = (state != Display.STATE_OFF);
             if (wasOn && !isOn) {
+                mLights.getLight(LightsManager.LIGHT_ID_BUTTONS).setBrightness(0);
                 unblockScreenOn();
                 mWindowManagerPolicy.screenTurnedOff();
             } else if (!wasOn && isOn) {
