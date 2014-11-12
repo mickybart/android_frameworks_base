@@ -335,17 +335,17 @@ void TextureCache::generateTexture(const SkBitmap* bitmap, Texture* texture, boo
 }
 
 void TextureCache::uploadToTexture(bool resize, bool lofi, GLenum format,
-            GLenum type, SkBitmap* bitmap, uint32_t width, uint32_t height) {
+            GLenum type, const SkBitmap* bitmap, uint32_t width, uint32_t height) {
     if (lofi || 
-      (bitmap->rowBytesAsPixels() != width && 
+      ((uint32_t)bitmap->rowBytesAsPixels() != width && 
       !Extensions::getInstance().hasUnpackRowLength())) {
         SkBitmap tmpBitmap;
-        bitmap->copyTo(&tmpBitmap, lofi ? SkBitmap::kARGB_8888_Config : bitmap->getConfig());
-        uploadToTexture(resize, format, tmpBitmap.rowBytesAsPixels(), width, height,
-        type, tmpBitmap.getPixels());
+        bitmap->copyTo(&tmpBitmap, lofi ? kN32_SkColorType : bitmap->colorType(), NULL);
+        uploadToTexture(resize, format, tmpBitmap.rowBytesAsPixels(), tmpBitmap.bytesPerPixel(), width, height,
+            type, tmpBitmap.getPixels());
     } else {
-        uploadToTexture(resize, format, bitmap->rowBytesAsPixels(), width, height,
-        type, bitmap->getPixels());
+        uploadToTexture(resize, format, bitmap->rowBytesAsPixels(), bitmap->bytesPerPixel(), width, height,
+            type, bitmap->getPixels());
     }
 }
 
