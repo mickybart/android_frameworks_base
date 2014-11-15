@@ -291,20 +291,20 @@ void TextureCache::generateTexture(const SkBitmap* bitmap, Texture* texture, boo
     switch (bitmap->colorType()) {
     case kAlpha_8_SkColorType:
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        uploadToTexture(resize, false, GL_ALPHA, GL_UNSIGNED_BYTE, bitmap,
-                texture->width, texture->height);
+        uploadToTexture(resize, GL_ALPHA, bitmap->rowBytesAsPixels(), bitmap->bytesPerPixel(),
+                texture->width, texture->height, GL_UNSIGNED_BYTE, bitmap->getPixels());
         texture->blend = true;
         break;
     case kRGB_565_SkColorType:
         glPixelStorei(GL_UNPACK_ALIGNMENT, bitmap->bytesPerPixel());
-        uploadToTexture(resize, false, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, bitmap,
-                texture->width, texture->height);
+        uploadToTexture(resize, GL_RGB, bitmap->rowBytesAsPixels(), bitmap->bytesPerPixel(),
+                texture->width, texture->height, GL_UNSIGNED_SHORT_5_6_5, bitmap->getPixels());
         texture->blend = false;
         break;
     case kN32_SkColorType:
         glPixelStorei(GL_UNPACK_ALIGNMENT, bitmap->bytesPerPixel());
-        uploadToTexture(resize, false, GL_RGBA, GL_UNSIGNED_BYTE, bitmap,
-                texture->width, texture->height);
+        uploadToTexture(resize, GL_RGBA, bitmap->rowBytesAsPixels(), bitmap->bytesPerPixel(),
+                texture->width, texture->height, GL_UNSIGNED_BYTE, bitmap->getPixels());
         // Do this after calling getPixels() to make sure Skia's deferred
         // decoding happened
         texture->blend = !bitmap->isOpaque();
@@ -312,8 +312,7 @@ void TextureCache::generateTexture(const SkBitmap* bitmap, Texture* texture, boo
     case kARGB_4444_SkColorType:
     case kIndex_8_SkColorType:
         glPixelStorei(GL_UNPACK_ALIGNMENT, bitmap->bytesPerPixel());
-        uploadToTexture(resize, true, GL_RGBA, GL_UNSIGNED_BYTE, bitmap,
-                texture->width, texture->height);
+        uploadLoFiTexture(resize, bitmap, texture->width, texture->height);
         texture->blend = !bitmap->isOpaque();
         break;
     default:
@@ -334,24 +333,22 @@ void TextureCache::generateTexture(const SkBitmap* bitmap, Texture* texture, boo
     }
 }
 
-void TextureCache::uploadToTexture(bool resize, bool lofi, GLenum format,
-            GLenum type, const SkBitmap* bitmap, uint32_t width, uint32_t height) {
-    if (lofi || 
-      ((uint32_t)bitmap->rowBytesAsPixels() != width && 
-      !Extensions::getInstance().hasUnpackRowLength())) {
-        SkBitmap tmpBitmap;
-        bitmap->copyTo(&tmpBitmap, lofi ? kN32_SkColorType : bitmap->colorType(), NULL);
-        uploadToTexture(resize, format, tmpBitmap.rowBytesAsPixels(), tmpBitmap.bytesPerPixel(), width, height,
-            type, tmpBitmap.getPixels());
-    } else {
-        uploadToTexture(resize, format, bitmap->rowBytesAsPixels(), bitmap->bytesPerPixel(), width, height,
-            type, bitmap->getPixels());
-    }
+void TextureCache::uploadLoFiTexture(bool resize, const SkBitmap* bitmap,
+        uint32_t width, uint32_t height) {
+    SkBitmap rgbaBitmap;
+    rgbaBitmap.allocPixels(SkImageInfo::MakeN32(width, height, bitmap->alphaType()));
+    rgbaBitmap.eraseColor(0);
+
+    SkCanvas canvas(rgbaBitmap);
+    canvas.drawBitmap(*bitmap, 0.0f, 0.0f, NULL);
+
+    uploadToTexture(resize, GL_RGBA, rgbaBitmap.rowBytesAsPixels(), rgbaBitmap.bytesPerPixel(),
+            width, height, GL_UNSIGNED_BYTE, rgbaBitmap.getPixels());
 }
 
 void TextureCache::uploadToTexture(bool resize, GLenum format, GLsizei stride, GLsizei bpp,
         GLsizei width, GLsizei height, GLenum type, const GLvoid * data) {
-    const bool useStride = stride != width;
+    const bool useStride = stride != width && Extensions::getInstance().hasUnpackRowLength();
     if ((stride == width) || useStride) {
         if (useStride) {
             glPixelStorei(GL_UNPACK_ROW_LENGTH, stride);
