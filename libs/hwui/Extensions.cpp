@@ -72,11 +72,6 @@ Extensions::Extensions(): Singleton<Extensions>() {
         mHasNvSystemTime = false;
     }
 
-    // check to disable or not tiled rendering due to bug of gpu binary (mako)
-    if (property_get("ro.hwui.disable_tiled_rendering", property, NULL) && !strcmp(property, "true")) {
-        mHasTiledRendering = false;
-    }
-
     const char* version = (const char*) glGetString(GL_VERSION);
 
     // Section 6.1.5 of the OpenGL ES specification indicates the GL version
