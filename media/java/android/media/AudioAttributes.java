@@ -508,6 +508,7 @@ public final class AudioAttributes implements Parcelable {
                 case MediaRecorder.AudioSource.CAMCORDER:
                 case MediaRecorder.AudioSource.VOICE_RECOGNITION:
                 case MediaRecorder.AudioSource.VOICE_COMMUNICATION:
+                case MediaRecorder.AudioSource.FM_TUNER:
                     mSource = preset;
                     break;
                 default:
