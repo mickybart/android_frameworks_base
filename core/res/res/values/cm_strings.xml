@@ -17,55 +17,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Names of default profiles. -->
-    <string name="profileNameDefault">Default</string>
-    <string name="profileNameWork">Work</string>
-    <string name="profileNameHome">Home</string>
-    <string name="profileNameSilent">Silent</string>
-    <string name="profileNameNight">Night</string>
-    <string name="profileNameAutomobile">Automobile</string>
-
-    <!-- Names of application groups. -->
-    <string name="profileGroupPhone">Phone</string>
-    <string name="profileGroupCalendar">Calendar</string>
-    <string name="profileGroupGmail">Gmail</string>
-    <string name="profileGroupEmail">Email</string>
-    <string name="profileGroupSMS">SMS</string>
-
-    <!-- Name of wildcard profile. -->
-    <string name="wildcardProfile">Other</string>
-
-     <!-- The item label for the no profile selection item. -->
-     <string name="profile_none">None</string>
-
-     <!-- The title of the profile picker dialog. -->
-     <string name="profile_picker_title">Profiles</string>
-
-    <!-- label for item that opens the profile choosing dialog -->
-    <string name="global_action_choose_profile">Profile</string>
-
-
-    <!-- Title of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permgrouplab_security">Security</string>
-    <!-- Description of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permgroupdesc_security">Permissions related to device security information.</string>
-
-    <!-- [CHAR LIMIT=NONE] Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permlab_readPhoneBlacklist">read phone blacklist</string>
-    <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permdesc_readPhoneBlacklist">Allows an app to read information about phone numbers that are blocked for incoming calls or messages.</string>
-
-    <!-- [CHAR LIMIT=NONE] Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permlab_changePhoneBlacklist">change phone blacklist</string>
-    <!-- [CHAR LIMIT=NONE] Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permdesc_changePhoneBlacklist">Allows an app to change the phone numbers that are blocked for incoming calls or messages.</string>
-
-    <!-- Privacy Guard -->
-    <string name="permlab_changePrivacyGuardState">enable or disable Privacy Guard</string>
-    <string name="permdesc_changePrivacyGuardState">Allows the app to change whether another app runs with Privacy Guard. When an app is running with Privacy Guard, it will not have access to personal data such as contacts, call logs, or messages.</string>
-    <string name="privacy_guard_notification">Privacy Guard active</string>
-    <string name="privacy_guard_notification_detail"><xliff:g id="app">%1$s</xliff:g> will not be able to access personal data</string>
-    <string name="privacy_guard_dialog_title">Privacy Guard</string>
-    <string name="privacy_guard_dialog_summary"><xliff:g id="app">%1$s</xliff:g> would like to <xliff:g id="op">%2$s</xliff:g>.</string>
+    <!-- label for item that reboots the phone in phone options dialog -->
+    <string name="global_action_reboot">Reboot</string>
 
     <!-- Reboot menu -->
     <!-- Button to reboot the phone, within the Reboot Options dialog -->
@@ -74,7 +27,20 @@
     <string name="reboot_recovery">Recovery</string>
     <!-- Button to reboot the phone into bootloader, within the Reboot Options dialog -->
     <string name="reboot_bootloader">Bootloader</string>
+    <!-- Button to reboot the phone into download, within the Reboot Options dialog -->
+    <string name="reboot_download">Download</string>
     <!-- Button to soft reboot the device, within the Reboot Options dialog -->
     <string name="reboot_soft">Soft reboot</string>
+
+    <!-- Title of dialog to confirm rebooting. -->
+    <string name="reboot_title">Reboot</string>
+
+    <!-- Reboot Confirmation Dialog.  When the user chooses to reboot the device, there will
+         be a confirmation dialog.  This is the message. -->
+    <string name="reboot_confirm" product="tablet">Your tablet will reboot.</string>
+    <string name="reboot_confirm" product="default">Your phone will reboot.</string>
+
+    <!-- Reboot Progress Dialog. This is shown if the user chooses to reboot the phone. -->
+    <string name="reboot_progress">Rebooting\u2026</string>
 
 </resources>
