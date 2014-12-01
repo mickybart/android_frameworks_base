@@ -650,7 +650,8 @@ class MountService extends IMountService.Stub
             final String action = intent.getAction();
             if (Intent.ACTION_USER_ADDED.equals(action)) {
                 synchronized (mVolumesLock) {
-                    createEmulatedVolumeForUserLocked(user);
+                    if (mEmulatedTemplate != null)
+                        createEmulatedVolumeForUserLocked(user);
                 }
 
             } else if (Intent.ACTION_USER_REMOVED.equals(action)) {
