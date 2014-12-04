@@ -168,22 +168,22 @@ final class ProcessList {
             BACKUP_APP_ADJ, CACHED_APP_MIN_ADJ, CACHED_APP_MAX_ADJ
     };
 
-    //Nozomi fix OOM
+    /*
+     * Force values by defining the same min and max. This settings is good only for the Nozomi context
+     */
 
     // These are the low-end OOM level limits.  This is appropriate for an
     // HVGA or smaller phone with less than 512MB.  Values are in KB.
     private final int[] mOomMinFreeLow = new int[] {
-            16384, 24576, 32768,
-            49152, 57344, 65536
+            32768, 49152, 65536,
+            98304, 114688, 131072
     };
     // These are the high-end OOM level limits.  This is appropriate for a
     // 1280x800 or larger screen with around 1GB RAM.  Values are in KB.
     private final int[] mOomMinFreeHigh = new int[] {
-            16384, 24576, 32768,
-            49152, 57344, 65536
+            32768, 49152, 65536,
+            98304, 114688, 131072
     };
-
-    //End Nozomi fix OOM
 
     // The actual OOM killer memory levels we are using.
     private final int[] mOomMinFree = new int[mOomAdj.length];
