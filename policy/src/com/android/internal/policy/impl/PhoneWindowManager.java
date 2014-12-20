@@ -125,6 +125,8 @@ import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_CO
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_UNCOVERED;
 import static android.view.WindowManagerPolicy.WindowManagerFuncs.CAMERA_LENS_COVERED;
 
+import android.app.Instrumentation;
+
 /**
  * WindowManagerPolicy implementation for the Android phone UI.  This
  * introduces a new method suffix, Lp, for an internal lock of the
@@ -163,6 +165,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static final int LONG_PRESS_HOME_NOTHING = 0;
     static final int LONG_PRESS_HOME_RECENT_SYSTEM_UI = 1;
     static final int LONG_PRESS_HOME_ASSIST = 2;
+    static final int LONG_PRESS_HOME_MENU = 3;
 
     static final int DOUBLE_TAP_HOME_NOTHING = 0;
     static final int DOUBLE_TAP_HOME_RECENT_SYSTEM_UI = 1;
@@ -940,6 +943,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 toggleRecentApps();
             } else if (mLongPressOnHomeBehavior == LONG_PRESS_HOME_ASSIST) {
                 launchAssistAction();
+            } else if (mLongPressOnHomeBehavior == LONG_PRESS_HOME_MENU) {
+                sendMenuKey();
             }
         }
     }
@@ -1119,7 +1124,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mLongPressOnHomeBehavior = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_longPressOnHomeBehavior);
         if (mLongPressOnHomeBehavior < LONG_PRESS_HOME_NOTHING ||
-                mLongPressOnHomeBehavior > LONG_PRESS_HOME_ASSIST) {
+                mLongPressOnHomeBehavior > LONG_PRESS_HOME_MENU) {
             mLongPressOnHomeBehavior = LONG_PRESS_HOME_NOTHING;
         }
 
@@ -2693,6 +2698,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             // re-acquire status bar service next time it is needed.
             mStatusBarService = null;
         }
+    }
+
+    private void sendMenuKey() {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    (new Instrumentation()).sendKeyDownUpSync( KeyEvent.KEYCODE_MENU );
+                } catch (Exception e) {
+                    Slog.e(TAG, "Exception when inject menu key press", e);
+                }
+            }
+        }).start();
     }
 
     @Override
