@@ -73,10 +73,6 @@ import java.util.ArrayList;
 
 import libcore.util.Objects;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
-
 /**
  * The power manager service is responsible for coordinating power management
  * functions on the device.
@@ -516,27 +512,8 @@ public final class PowerManagerService extends SystemService
 
             mLightsManager = getLocalService(LightsManager.class);
             mAttentionLight = mLightsManager.getLight(LightsManager.LIGHT_ID_ATTENTION);
-
-            // Lightbar for Nozomi
-            java.lang.Process p = null;
-            String isLightbar = null;
-            try {
-                p = new java.lang.ProcessBuilder("/system/bin/getprop", "sys.lightbar.enable").redirectErrorStream(true).start();
-                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String line = "";
-                while ((line=br.readLine()) != null){
-                    isLightbar = line;
-                }
-                p.destroy();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            if (isLightbar != null && isLightbar.equals("false")) {
-                mButtonsLight = null;
-            } else {
+            if (SystemProperties.getBoolean("sys.lightbar.enable", true))
                 mButtonsLight = mLightsManager.getLight(LightsManager.LIGHT_ID_BUTTONS);
-            }
 
             // Initialize display power management.
             mDisplayManagerInternal.initPowerManagement(
