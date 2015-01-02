@@ -167,24 +167,18 @@ final class ProcessList {
             FOREGROUND_APP_ADJ, VISIBLE_APP_ADJ, PERCEPTIBLE_APP_ADJ,
             BACKUP_APP_ADJ, CACHED_APP_MIN_ADJ, CACHED_APP_MAX_ADJ
     };
-
-    /*
-     * Force values by defining the same min and max. This settings is good only for the Nozomi context
-     */
-
     // These are the low-end OOM level limits.  This is appropriate for an
     // HVGA or smaller phone with less than 512MB.  Values are in KB.
     private final int[] mOomMinFreeLow = new int[] {
-            32768, 49152, 65536,
-            98304, 114688, 131072
+            12288, 18432, 24576,
+            36864, 43008, 49152
     };
     // These are the high-end OOM level limits.  This is appropriate for a
     // 1280x800 or larger screen with around 1GB RAM.  Values are in KB.
     private final int[] mOomMinFreeHigh = new int[] {
-            32768, 49152, 65536,
-            98304, 114688, 131072
+            73728, 92160, 110592,
+            129024, 147456, 184320
     };
-
     // The actual OOM killer memory levels we are using.
     private final int[] mOomMinFree = new int[mOomAdj.length];
 
@@ -239,6 +233,12 @@ final class ProcessList {
                 com.android.internal.R.integer.config_lowMemoryKillerMinFreeKbytesAbsolute);
         if (false) {
             Slog.i("XXXXXX", "minfree_adj=" + minfree_adj + " minfree_abs=" + minfree_abs);
+        }
+
+        if (Build.SUPPORTED_64_BIT_ABIS.length > 0) {
+            // Increase the high min-free levels for cached processes for 64-bit
+            mOomMinFreeHigh[4] = 225000;
+            mOomMinFreeHigh[5] = 325000;
         }
 
         for (int i=0; i<mOomAdj.length; i++) {
