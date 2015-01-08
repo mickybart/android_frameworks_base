@@ -64,7 +64,7 @@ class AutomaticBrightnessController {
     // when adapting to brighter or darker environments.  This parameter controls how quickly
     // brightness changes occur in response to an observed change in light level that exceeds the
     // hysteresis threshold.
-    private static final long BRIGHTENING_LIGHT_DEBOUNCE = 4000;
+    private static final long BRIGHTENING_LIGHT_DEBOUNCE = 1500;
     private static final long DARKENING_LIGHT_DEBOUNCE = 8000;
 
     // Hysteresis constraints for brightening or darkening.
