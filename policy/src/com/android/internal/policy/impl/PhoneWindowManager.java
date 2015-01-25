@@ -173,6 +173,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     //Qemu Hw Mainkeys
     static final int QEMU_HW_MAINKEYS_LAYOUT_DEPRECATED = 0;
     static final int QEMU_HW_MAINKEYS_LAYOUT_50 = 1;
+    static final int QEMU_HW_MAINKEYS_MUSIC = 1;
 
     static final int DOUBLE_TAP_HOME_NOTHING = 0;
     static final int DOUBLE_TAP_HOME_RECENT_SYSTEM_UI = 1;
@@ -489,6 +490,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     
     //Qemu Hw Mainkeys
     int mQemuHwMainkeysLayout;
+    boolean mQemuHwMainkeysMusic;
+    boolean mQemuHwMainkeysIsLongPress;
 
     // support for activating the lock screen while the screen is on
     boolean mAllowLockscreenWhenOn;
@@ -567,6 +570,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_DISPATCH_SHOW_GLOBAL_ACTIONS = 10;
     private static final int MSG_HIDE_BOOT_MESSAGE = 11;
     private static final int MSG_LAUNCH_VOICE_ASSIST_WITH_WAKE_LOCK = 12;
+    private static final int MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK = 13;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -607,6 +611,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_LAUNCH_VOICE_ASSIST_WITH_WAKE_LOCK:
                     launchVoiceAssistWithWakeLock(msg.arg1 != 0);
+                    break;
+                case MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK:
+                    KeyEvent event = (KeyEvent) msg.obj;
+                    mQemuHwMainkeysIsLongPress = true;
+                    dispatchMediaKeyWithWakeLockToAudioService(event);
+                    dispatchMediaKeyWithWakeLockToAudioService(
+                            KeyEvent.changeAction(event, KeyEvent.ACTION_UP));
                     break;
             }
         }
@@ -1060,6 +1071,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mQemuHwMainkeysLayout > QEMU_HW_MAINKEYS_LAYOUT_50) {
             mQemuHwMainkeysLayout = QEMU_HW_MAINKEYS_LAYOUT_50;
         }
+        mQemuHwMainkeysMusic = (SystemProperties.getInt("qemu.hw.mainkeys.music", QEMU_HW_MAINKEYS_MUSIC) == QEMU_HW_MAINKEYS_MUSIC);
         
         readConfigurationDependentBehaviors();
 
@@ -4230,6 +4242,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mHdmiPlugged = !plugged;
         setHdmiPlugged(!mHdmiPlugged);
     }
+    
+    /**
+     * @return Whether music is being played right now "locally" (e.g. on the device's speakers
+     *    or wired headphones) or "remotely" (e.g. on a device using the Cast protocol and
+     *    controlled by this device, or through remote submix).
+     */
+    private boolean isMusicActive() {
+        final AudioManager am = (AudioManager)mContext.getSystemService(Context.AUDIO_SERVICE);
+        if (am == null) {
+            Log.w(TAG, "isMusicActive: couldn't get AudioManager reference");
+            return false;
+        }
+        return am.isMusicActive();
+    }
 
     final Object mScreenshotLock = new Object();
     ServiceConnection mScreenshotConnection = null;
@@ -4371,7 +4397,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         switch (keyCode) {
             case KeyEvent.KEYCODE_VOLUME_DOWN:
             case KeyEvent.KEYCODE_VOLUME_UP:
-            case KeyEvent.KEYCODE_VOLUME_MUTE: {
+            case KeyEvent.KEYCODE_VOLUME_MUTE: 
+            case KeyEvent.KEYCODE_CAMERA : {
                 if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
                     if (down) {
                         if (interactive && !mVolumeDownKeyTriggered
@@ -4431,15 +4458,60 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                             break;
                         }
                     }
+                }
+                
+                if ((result & ACTION_PASS_TO_USER) == 0) {
+                    boolean mayChangeVolume = false;
 
-                    if ((result & ACTION_PASS_TO_USER) == 0) {
+                    if (isMusicActive()) {
+                        if (mQemuHwMainkeysMusic && (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE)) {
+                            // Detect long key presses.
+                            if (down) {
+                                mQemuHwMainkeysIsLongPress = false;
+                                int newKeyCode;
+                                switch (keyCode) {
+                                    case KeyEvent.KEYCODE_VOLUME_UP:
+                                        newKeyCode = KeyEvent.KEYCODE_MEDIA_NEXT;
+                                        break;
+                                    case KeyEvent.KEYCODE_VOLUME_DOWN:
+                                        newKeyCode = KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+                                        break;
+                                    default: // KeyEvent.KEYCODE_CAMERA
+                                        newKeyCode = KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
+                                        break;
+                                }
+                                
+                                scheduleLongPressKeyEvent(event, newKeyCode);
+                                // Consume key down events of all presses.
+                                break;
+                            } else {
+                                mHandler.removeMessages(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK);
+                                // Consume key up events of long presses only.
+                                if (mQemuHwMainkeysIsLongPress) {
+                                    break;
+                                }
+                                // Change volume only on key up events of short presses.
+                                mayChangeVolume = true;
+                            }
+                        } else {
+                            // Long key press detection not applicable, change volume only
+                            // on key down events
+                            mayChangeVolume = down;
+                        }
+                    }
+
+                    if (mayChangeVolume && keyCode != KeyEvent.KEYCODE_CAMERA) {
                         // If we aren't passing to the user and no one else
                         // handled it send it to the session manager to figure
                         // out.
+
+                        // Rewrite the event to use key-down as sendVolumeKeyEvent will
+                        // only change the volume on key down.
+                        KeyEvent newEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
                         MediaSessionLegacyHelper.getHelper(mContext)
-                                .sendVolumeKeyEvent(event, true);
-                        break;
+                                .sendVolumeKeyEvent(newEvent, true);
                     }
+                    break;
                 }
                 break;
             }
@@ -4610,6 +4682,14 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mPowerManager.wakeUp(event.getEventTime());
         }
         return result;
+    }
+    
+    private void scheduleLongPressKeyEvent(KeyEvent origEvent, int keyCode) {
+        KeyEvent event = new KeyEvent(origEvent.getDownTime(), origEvent.getEventTime(),
+                origEvent.getAction(), keyCode, 0);
+        Message msg = mHandler.obtainMessage(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK, event);
+        msg.setAsynchronous(true);
+        mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
     }
 
     /**
