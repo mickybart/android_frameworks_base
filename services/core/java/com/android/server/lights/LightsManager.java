@@ -16,7 +16,14 @@
 
 package com.android.server.lights;
 
+import android.os.SystemProperties;
+
 public abstract class LightsManager {
+    public static final int LIGHT_ID_BUTTONS_DISABLE = 0;
+    public static final int LIGHT_ID_BUTTONS_TIMEOUT = 1;
+    public static final int LIGHT_ID_BUTTONS_LINKED = 2;
+    protected int mButtonsLightMode;
+
     public static final int LIGHT_ID_BACKLIGHT = 0;
     public static final int LIGHT_ID_KEYBOARD = 1;
     public static final int LIGHT_ID_BUTTONS = 2;
@@ -27,5 +34,22 @@ public abstract class LightsManager {
     public static final int LIGHT_ID_WIFI = 7;
     public static final int LIGHT_ID_COUNT = 8;
 
+    public LightsManager() {
+        //Set the LIGHT_ID_BUTTONS mode
+        mButtonsLightMode = SystemProperties.getInt("sys.lightbar.mode", LIGHT_ID_BUTTONS_TIMEOUT);
+        if (mButtonsLightMode < LIGHT_ID_BUTTONS_DISABLE || 
+                   mButtonsLightMode > LIGHT_ID_BUTTONS_LINKED) {
+            mButtonsLightMode = LIGHT_ID_BUTTONS_TIMEOUT;
+        }
+    }
+
     public abstract Light getLight(int id);
+
+    public boolean isButtonsLightTimeout() {
+        return mButtonsLightMode == LIGHT_ID_BUTTONS_TIMEOUT;
+    }
+
+    public boolean isButtonsLightLinked() {
+        return mButtonsLightMode == LIGHT_ID_BUTTONS_LINKED;
+    }
 }

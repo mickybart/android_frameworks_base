@@ -428,7 +428,8 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
         // In the future, we might manage multiple displays independently.
         mPowerState = new DisplayPowerState(mBlanker,
                 mLights.getLight(LightsManager.LIGHT_ID_BACKLIGHT),
-                SystemProperties.getBoolean("sys.lightbar.enable", true) ? mLights.getLight(LightsManager.LIGHT_ID_BUTTONS) : null,
+                mLights.getLight(LightsManager.LIGHT_ID_BUTTONS),
+                mLights.isButtonsLightLinked(),
                 new ColorFade(Display.DEFAULT_DISPLAY));
 
         mColorFadeOnAnimator = ObjectAnimator.ofFloat(
