@@ -170,7 +170,6 @@ public final class PowerManagerService extends SystemService
     private SettingsObserver mSettingsObserver;
     private DreamManagerInternal mDreamManager;
     private Light mAttentionLight;
-    private Light mButtonsLight;
 
     private final Object mLock = new Object();
 
@@ -512,7 +511,6 @@ public final class PowerManagerService extends SystemService
 
             mLightsManager = getLocalService(LightsManager.class);
             mAttentionLight = mLightsManager.getLight(LightsManager.LIGHT_ID_ATTENTION);
-            mButtonsLight = mLightsManager.getLight(LightsManager.LIGHT_ID_BUTTONS);
 
             // Initialize display power management.
             mDisplayManagerInternal.initPowerManagement(
@@ -1454,11 +1452,11 @@ public final class PowerManagerService extends SystemService
                     nextTimeout = mLastUserActivityTime
                             + screenOffTimeout - screenDimDuration;
                     if (now < nextTimeout) {
-                        if (mButtonsLight != null && mLightsManager.isButtonsLightTimeout()) {
+                        if (mLightsManager.isButtonsLightTimeout()) {
                             if (now > mLastUserActivityTime + BUTTON_ON_DURATION) {
-                                mButtonsLight.turnOff();
+                                mLightsManager.turnOffButtons();
                             } else if (mDisplayPowerRequest.isBrightOrDim()) {
-                                mButtonsLight.setBrightness(mDisplayPowerRequest.screenBrightness);
+                                mLightsManager.turnOnButtons();
                                 nextTimeout = now + BUTTON_ON_DURATION;
                             }
                         }

@@ -22,7 +22,6 @@ public abstract class LightsManager {
     public static final int LIGHT_ID_BUTTONS_DISABLE = 0;
     public static final int LIGHT_ID_BUTTONS_TIMEOUT = 1;
     public static final int LIGHT_ID_BUTTONS_LINKED = 2;
-    protected int mButtonsLightMode;
 
     public static final int LIGHT_ID_BACKLIGHT = 0;
     public static final int LIGHT_ID_KEYBOARD = 1;
@@ -34,6 +33,10 @@ public abstract class LightsManager {
     public static final int LIGHT_ID_WIFI = 7;
     public static final int LIGHT_ID_COUNT = 8;
 
+    protected int mButtonsLightMode;
+    private int mColorBacklight = 0;
+    private final Object mLock = new Object();
+    
     public LightsManager() {
         //Set the LIGHT_ID_BUTTONS mode
         mButtonsLightMode = SystemProperties.getInt("sys.lightbar.mode", LIGHT_ID_BUTTONS_TIMEOUT);
@@ -44,12 +47,43 @@ public abstract class LightsManager {
     }
 
     public abstract Light getLight(int id);
-
+    
+    public void setBacklightBrightness(int brightness) {
+        synchronized (mLock) {
+            if (mColorBacklight != brightness) {
+                mColorBacklight = brightness;
+                getLight(LIGHT_ID_BACKLIGHT).setBrightness(brightness);
+                
+                if (mButtonsLightMode == LIGHT_ID_BUTTONS_LINKED) {
+                    getLight(LIGHT_ID_BUTTONS).setBrightness(brightness);
+                } else if (mButtonsLightMode == LIGHT_ID_BUTTONS_TIMEOUT) {
+                    getLight(LIGHT_ID_BUTTONS).setBrightnessIfNotOff(brightness);
+                }
+            }
+        }
+    }
+    
+    public void turnOnButtons() {
+        if (!isButtonsLightDisable()) {
+            synchronized (mLock) {
+                getLight(LIGHT_ID_BUTTONS).setBrightness(mColorBacklight);
+            }
+        }
+    }
+    
+    public void turnOffButtons() {
+        if (!isButtonsLightDisable()) {
+            synchronized (mLock) {
+                getLight(LIGHT_ID_BUTTONS).turnOff();
+            }
+        }
+    }
+    
+    protected boolean isButtonsLightDisable() {
+        return mButtonsLightMode == LIGHT_ID_BUTTONS_DISABLE;
+    }
+    
     public boolean isButtonsLightTimeout() {
         return mButtonsLightMode == LIGHT_ID_BUTTONS_TIMEOUT;
-    }
-
-    public boolean isButtonsLightLinked() {
-        return mButtonsLightMode == LIGHT_ID_BUTTONS_LINKED;
     }
 }

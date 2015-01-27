@@ -427,9 +427,7 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
         // Initialize the power state object for the default display.
         // In the future, we might manage multiple displays independently.
         mPowerState = new DisplayPowerState(mBlanker,
-                mLights.getLight(LightsManager.LIGHT_ID_BACKLIGHT),
-                mLights.getLight(LightsManager.LIGHT_ID_BUTTONS),
-                mLights.isButtonsLightLinked(),
+                mLights,
                 new ColorFade(Display.DEFAULT_DISPLAY));
 
         mColorFadeOnAnimator = ObjectAnimator.ofFloat(

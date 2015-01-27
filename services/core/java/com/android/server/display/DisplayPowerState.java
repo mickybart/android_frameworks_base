@@ -16,7 +16,7 @@
 
 package com.android.server.display;
 
-import com.android.server.lights.Light;
+import com.android.server.lights.LightsManager;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -57,9 +57,7 @@ final class DisplayPowerState {
     private final Handler mHandler;
     private final Choreographer mChoreographer;
     private final DisplayBlanker mBlanker;
-    private final Light mBacklight;
-    private final Light mButtonsLight;
-    private final boolean mButtonsLightLinked;
+    private final LightsManager mLightsManager;
     private final ColorFade mColorFade;
     private final PhotonicModulator mPhotonicModulator;
 
@@ -75,13 +73,11 @@ final class DisplayPowerState {
 
     private Runnable mCleanListener;
 
-    public DisplayPowerState(DisplayBlanker blanker, Light backlight, Light buttonsLight, boolean buttonsLightLinked, ColorFade electronBeam) {
+    public DisplayPowerState(DisplayBlanker blanker, LightsManager lightsManager, ColorFade electronBeam) {
         mHandler = new Handler(true /*async*/);
         mChoreographer = Choreographer.getInstance();
         mBlanker = blanker;
-        mBacklight = backlight;
-        mButtonsLight = buttonsLight;
-        mButtonsLightLinked = buttonsLightLinked;
+        mLightsManager = lightsManager;
         mColorFade = electronBeam;
         mPhotonicModulator = new PhotonicModulator();
         mPhotonicModulator.start();
@@ -442,14 +438,7 @@ final class DisplayPowerState {
         private void setBrightness(int backlight) {
             Trace.traceBegin(Trace.TRACE_TAG_POWER, "setBrightness(" + backlight + ")");
             try {
-                mBacklight.setBrightness(backlight);
-                if (mButtonsLight != null) {
-                    if (mButtonsLightLinked) {
-                        mButtonsLight.setBrightness(backlight);
-                    } else {
-                        mButtonsLight.setBrightnessIfNotOff(backlight);
-                    }
-                }
+                mLightsManager.setBacklightBrightness(backlight);
             } finally {
                 Trace.traceEnd(Trace.TRACE_TAG_POWER);
             }
