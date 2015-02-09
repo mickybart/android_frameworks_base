@@ -1066,12 +1066,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 com.android.internal.R.bool.config_enableTranslucentDecor);
         
         // Qemu Hw Mainkeys
-        mQemuHwMainkeysLayout = SystemProperties.getInt("qemu.hw.mainkeys.layout", QEMU_HW_MAINKEYS_LAYOUT_50);
+        mQemuHwMainkeysLayout = SystemProperties.getInt("persist.qemu.hw.mainkeys_layout", QEMU_HW_MAINKEYS_LAYOUT_50);
         if (mQemuHwMainkeysLayout < QEMU_HW_MAINKEYS_LAYOUT_DEPRECATED ||
                 mQemuHwMainkeysLayout > QEMU_HW_MAINKEYS_LAYOUT_50) {
             mQemuHwMainkeysLayout = QEMU_HW_MAINKEYS_LAYOUT_50;
         }
-        mQemuHwMainkeysMusic = (SystemProperties.getInt("qemu.hw.mainkeys.music", QEMU_HW_MAINKEYS_MUSIC) == QEMU_HW_MAINKEYS_MUSIC);
+        mQemuHwMainkeysMusic = (SystemProperties.getInt("persist.qemu.hw.mainkeys_music", QEMU_HW_MAINKEYS_MUSIC) == QEMU_HW_MAINKEYS_MUSIC);
         
         readConfigurationDependentBehaviors();
 
