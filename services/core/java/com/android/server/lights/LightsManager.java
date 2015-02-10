@@ -39,7 +39,7 @@ public abstract class LightsManager {
     
     public LightsManager() {
         //Set the LIGHT_ID_BUTTONS mode
-        mButtonsLightMode = SystemProperties.getInt("sys.lightbar.mode", LIGHT_ID_BUTTONS_TIMEOUT);
+        mButtonsLightMode = SystemProperties.getInt("persist.sys.lightbar_mode", LIGHT_ID_BUTTONS_TIMEOUT);
         if (mButtonsLightMode < LIGHT_ID_BUTTONS_DISABLE || 
                    mButtonsLightMode > LIGHT_ID_BUTTONS_LINKED) {
             mButtonsLightMode = LIGHT_ID_BUTTONS_TIMEOUT;
