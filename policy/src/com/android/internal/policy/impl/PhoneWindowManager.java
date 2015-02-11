@@ -166,10 +166,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     static final int LONG_PRESS_HOME_RECENT_SYSTEM_UI = 1;
     static final int LONG_PRESS_HOME_ASSIST = 2;
     
-    //App Switch long press
-    static final int LONG_PRESS_APPSWITCH_NOTHING = 0;
-    static final int LONG_PRESS_APPSWITCH_MENU = 1;
-    
     //Qemu Hw Mainkeys
     static final int QEMU_HW_MAINKEYS_LAYOUT_DEPRECATED = 0;
     static final int QEMU_HW_MAINKEYS_LAYOUT_50 = 1;
@@ -484,9 +480,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mAssistKeyLongPressed;
     boolean mPendingMetaAction;
     
-    //App Switch long press
-    boolean mAppSwitchPressed;
-    boolean mAppSwitchConsumed;
+    //Menu long press
+    boolean mMenuPressed;
+    boolean mMenuForced = false;
     
     //Qemu Hw Mainkeys
     int mQemuHwMainkeysLayout;
@@ -522,9 +518,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     // What we do when the user double-taps on home
     private int mDoubleTapOnHomeBehavior;
-    
-    // What we do when the user long presses on app switch
-    private int mLongPressOnAppSwitchBehavior;
 
     // Screenshot trigger states
     // Time to volume and power must be pressed within this interval of each other.
@@ -974,17 +967,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
     }
-    
-    private void handleLongPressOnAppSwitch() {
-        if (mLongPressOnAppSwitchBehavior != LONG_PRESS_APPSWITCH_NOTHING) {
-            mAppSwitchConsumed = true;
-            performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, false);
-
-            if (mLongPressOnAppSwitchBehavior == LONG_PRESS_APPSWITCH_MENU) {
-                sendMenuKey();
-            }
-        }
-    }
 
     private void handleDoubleTapOnHome() {
         if (mDoubleTapOnHomeBehavior == DOUBLE_TAP_HOME_RECENT_SYSTEM_UI) {
@@ -1183,7 +1165,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         } else {
             /* QEMU_HW_MAINKEYS_LAYOUT_50 for Nozomi */
-            mLongPressOnAppSwitchBehavior = LONG_PRESS_APPSWITCH_MENU;
             mLongPressOnHomeBehavior = LONG_PRESS_HOME_ASSIST;
             mDoubleTapOnHomeBehavior = LONG_PRESS_HOME_NOTHING;
         }
@@ -2215,7 +2196,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         if (DEBUG_INPUT) {
             Log.d(TAG, "interceptKeyTi keyCode=" + keyCode + " down=" + down + " repeatCount="
                     + repeatCount + " keyguardOn=" + keyguardOn + " mHomePressed=" + mHomePressed
-                    + " canceled=" + canceled + " mAppSwitchPressed=" + mAppSwitchPressed);
+                    + " canceled=" + canceled + " mMenuPressed=" + mMenuPressed);
         }
 
         // If we think we might have a volume down & power key chord on the way
@@ -2334,32 +2315,68 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return -1;
         } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (mMenuForced || keyguardOn) {
+                if (!down) {
+                    mMenuForced = false;
+                }
+                return 0;
+            }
+
             // Hijack modified menu keys for debugging features
             final int chordBug = KeyEvent.META_SHIFT_ON;
 
-            if (down && repeatCount == 0) {
-                if (mEnableShiftMenuBugReports && (metaState & chordBug) == chordBug) {
-                    Intent intent = new Intent(Intent.ACTION_BUG_REPORT);
-                    mContext.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT,
-                            null, null, null, 0, null, null);
-                    return -1;
-                } else if (SHOW_PROCESSES_ON_ALT_MENU &&
-                        (metaState & KeyEvent.META_ALT_ON) == KeyEvent.META_ALT_ON) {
-                    Intent service = new Intent();
-                    service.setClassName(mContext, "com.android.server.LoadAverageService");
-                    ContentResolver res = mContext.getContentResolver();
-                    boolean shown = Settings.Global.getInt(
-                            res, Settings.Global.SHOW_PROCESSES, 0) != 0;
-                    if (!shown) {
-                        mContext.startService(service);
-                    } else {
-                        mContext.stopService(service);
+            if (down) {
+                if(mQemuHwMainkeysLayout == QEMU_HW_MAINKEYS_LAYOUT_50) {
+                    preloadRecentApps();
+                }
+                
+                if (repeatCount == 0) {
+                    mMenuPressed = true;
+                    if (mEnableShiftMenuBugReports && (metaState & chordBug) == chordBug) {
+                        Intent intent = new Intent(Intent.ACTION_BUG_REPORT);
+                        mContext.sendOrderedBroadcastAsUser(intent, UserHandle.CURRENT,
+                                null, null, null, 0, null, null);
+                        return -1;
+                    } else if (SHOW_PROCESSES_ON_ALT_MENU &&
+                            (metaState & KeyEvent.META_ALT_ON) == KeyEvent.META_ALT_ON) {
+                        Intent service = new Intent();
+                        service.setClassName(mContext, "com.android.server.LoadAverageService");
+                        ContentResolver res = mContext.getContentResolver();
+                        boolean shown = Settings.Global.getInt(
+                                res, Settings.Global.SHOW_PROCESSES, 0) != 0;
+                        if (!shown) {
+                            mContext.startService(service);
+                        } else {
+                            mContext.stopService(service);
+                        }
+                        Settings.Global.putInt(
+                                res, Settings.Global.SHOW_PROCESSES, shown ? 0 : 1);
+                        return -1;
                     }
-                    Settings.Global.putInt(
-                            res, Settings.Global.SHOW_PROCESSES, shown ? 0 : 1);
-                    return -1;
+                } else if (mQemuHwMainkeysLayout == QEMU_HW_MAINKEYS_LAYOUT_50 && 
+                                (event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
+                                
+                    if (!keyguardOn) {
+                        cancelPreloadRecentApps();
+                        performHapticFeedbackLw(null, HapticFeedbackConstants.LONG_PRESS, false);
+                        mMenuPressed = false;
+                        mMenuForced = true;
+                        sendMenuKey();
+                        return -1;
+                    }
                 }
             }
+            
+            if (mQemuHwMainkeysLayout == QEMU_HW_MAINKEYS_LAYOUT_50) {
+                if(!down && mMenuPressed) {
+                    mMenuPressed = false;
+                    if (!canceled) {
+                        toggleRecentApps();
+                    }
+                }
+                return -1;
+            }
+            return 0;
         } else if (keyCode == KeyEvent.KEYCODE_SEARCH) {
             if (down) {
                 if (repeatCount == 0) {
@@ -2375,40 +2392,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return 0;
         } else if (keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
-        
-            if(mQemuHwMainkeysLayout == QEMU_HW_MAINKEYS_LAYOUT_DEPRECATED) {
+            if (!keyguardOn) {
                 if (down && repeatCount == 0) {
-                    sendMenuKey();
-                    return -1;
-                }
-            } else {
-                // If we have released the app switch key, and didn't do anything else
-                // while it was pressed, then it is time to show recentApps!
-                if (!down) {
-                    mAppSwitchPressed = false;
-                    if (mAppSwitchConsumed) {
-                        mAppSwitchConsumed = false;
-                        return -1;
-                    }
-                    
-                    if (canceled) {
-                        Log.i(TAG, "Ignoring APP_SWITCH; event canceled.");
-                        return -1;
-                    }
-                    
-                    toggleRecentApps();
-                    return -1;
-                }
-                
-                // Remember that app_switch is pressed and handle special actions.
-                if (repeatCount == 0) {
-                    mAppSwitchPressed = true;
                     preloadRecentApps();
-                } else if ((event.getFlags() & KeyEvent.FLAG_LONG_PRESS) != 0) {
-                    if (!keyguardOn) {
-                        cancelPreloadRecentApps();
-                        handleLongPressOnAppSwitch();
-                    }
+                } else if (!down) {
+                    toggleRecentApps();
                 }
             }
             return -1;
@@ -2793,6 +2781,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }).start();
     }
+
 
     @Override
     public void showRecentApps() {
@@ -6222,14 +6211,13 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         pw.print(prefix); pw.print("mDismissKeyguard="); pw.print(mDismissKeyguard);
                 pw.print(" mWinDismissingKeyguard="); pw.print(mWinDismissingKeyguard);
                 pw.print(" mHomePressed="); pw.println(mHomePressed);
-                pw.print(" mAppSwitchPressed="); pw.println(mAppSwitchPressed);
+                pw.print(" mMenuPressed="); pw.println(mMenuPressed);
         pw.print(prefix); pw.print("mAllowLockscreenWhenOn="); pw.print(mAllowLockscreenWhenOn);
                 pw.print(" mLockScreenTimeout="); pw.print(mLockScreenTimeout);
                 pw.print(" mLockScreenTimerActive="); pw.println(mLockScreenTimerActive);
         pw.print(prefix); pw.print("mEndcallBehavior="); pw.print(mEndcallBehavior);
                 pw.print(" mIncallPowerBehavior="); pw.print(mIncallPowerBehavior);
                 pw.print(" mLongPressOnHomeBehavior="); pw.println(mLongPressOnHomeBehavior);
-                pw.print(" mLongPressOnAppSwitchBehavior="); pw.println(mLongPressOnAppSwitchBehavior);
         pw.print(prefix); pw.print("mLandscapeRotation="); pw.print(mLandscapeRotation);
                 pw.print(" mSeascapeRotation="); pw.println(mSeascapeRotation);
         pw.print(prefix); pw.print("mPortraitRotation="); pw.print(mPortraitRotation);
