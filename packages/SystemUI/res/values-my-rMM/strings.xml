@@ -35,7 +35,7 @@
     <string name="battery_low_title" msgid="6456385927409742437">"ဘက်ထရီ အားနည်းနေ"</string>
     <string name="battery_low_percent_format" msgid="2900940511201380775">"<xliff:g id="PERCENTAGE">%s</xliff:g> ကျန်ရှိနေ"</string>
     <string name="battery_low_percent_format_saver_started" msgid="6859235584035338833">"<xliff:g id="PERCENTAGE">%s</xliff:g> ကျန်ရှိနေ။ ဘက်ထရီ ချွေတာမှု ဖွင့်ထား။"</string>
->>>>>>> android-5.1.0_r1
+    <string name="invalid_charger" msgid="4549105996740522523">"လက်ရှိUSBအားသွင်းခြင်း အသုံးမပြုနိုင်ပါ \n ပေးထားသောအားသွင်းကိရိယာကိုသာ အသုံးပြုပါ"</string>
     <string name="invalid_charger_title" msgid="3515740382572798460">"USB အားသွင်းမှု မပံ့ပိုးပါ။"</string>
     <string name="invalid_charger_text" msgid="5474997287953892710">"ပေးခဲ့သည့် အားသွင်းစက်ကိုသာ အသုံးပြုပါ"</string>
     <string name="battery_low_why" msgid="4553600287639198111">"ဆက်တင်များ"</string>
