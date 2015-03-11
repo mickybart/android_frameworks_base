@@ -648,6 +648,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     dispatchMediaKeyWithWakeLockToAudioService(event);
                     dispatchMediaKeyWithWakeLockToAudioService(
                             KeyEvent.changeAction(event, KeyEvent.ACTION_UP));
+                    break;
                 case MSG_POWER_DELAYED_PRESS:
                     powerPress((Long)msg.obj, msg.arg1 != 0, msg.arg2);
                     finishPowerKeyPress();
