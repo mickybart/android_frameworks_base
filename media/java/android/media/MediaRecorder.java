@@ -375,7 +375,7 @@ public class MediaRecorder
      * @see android.media.MediaRecorder.AudioSource
      */
     public static final int getAudioSourceMax() {
-        return AudioSource.FM_TUNER;
+        return AudioSource.REMOTE_SUBMIX;
     }
 
     /**
