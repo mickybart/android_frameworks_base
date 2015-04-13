@@ -1489,7 +1489,6 @@ void OpenGLRenderer::setStencilFromClip() {
             // The last parameter is important: we are not drawing in the color buffer
             // so we don't want to dirty the current layer, if any
             drawRegionRects(*(currentSnapshot()->clipRegion), paint, false);
-            glFlush();
             if (resetScissor) mCaches.disableScissor();
             mSkipOutlineClip = storedSkipOutlineClip;
 
