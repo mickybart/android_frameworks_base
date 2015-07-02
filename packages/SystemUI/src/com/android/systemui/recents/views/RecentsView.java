@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
@@ -304,6 +305,12 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         Rect taskStackBounds = new Rect();
         mConfig.getTaskStackBounds(width, height, mConfig.systemInsets.top,
                 mConfig.systemInsets.right, taskStackBounds);
+
+        if (mFloatingButton != null) {
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mFloatingButton.getLayoutParams();
+            params.bottomMargin = mConfig.systemInsets.bottom + getResources().getDimensionPixelSize(R.dimen.floating_action_button_margin_bottom);
+            mFloatingButton.setLayoutParams(params);
+        }
 
         // Measure each TaskStackView with the full width and height of the window since the 
         // transition view is a child of that stack view
