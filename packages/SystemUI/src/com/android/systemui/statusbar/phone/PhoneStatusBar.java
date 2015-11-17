@@ -795,6 +795,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         mAssistManager = SystemUIFactory.getInstance().createAssistManager(this, context);
+        if (mNavigationBarView == null) {
+            mAssistManager.onConfigurationChanged();
+        }
 
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
