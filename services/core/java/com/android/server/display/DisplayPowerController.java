@@ -36,6 +36,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.os.Trace;
 import android.util.MathUtils;
 import android.util.Slog;
@@ -273,8 +274,20 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
         final int screenBrightnessSettingMinimum = clampAbsoluteBrightness(resources.getInteger(
                 com.android.internal.R.integer.config_screenBrightnessSettingMinimum));
 
-        mScreenBrightnessDozeConfig = clampAbsoluteBrightness(resources.getInteger(
-                com.android.internal.R.integer.config_screenBrightnessDoze));
+        // Doze brightness custom
+        int screenBrightnessDozeProperty = SystemProperties.getInt("persist.screen.doze_brightness",-1);
+        if (screenBrightnessDozeProperty == 0) {
+            mAllowAutoBrightnessWhileDozingConfig = true;
+        } else {
+            mAllowAutoBrightnessWhileDozingConfig = resources.getBoolean(
+                    com.android.internal.R.bool.config_allowAutoBrightnessWhileDozing);
+        }
+        if (mAllowAutoBrightnessWhileDozingConfig || screenBrightnessDozeProperty < 0 || screenBrightnessDozeProperty > 255) {
+            mScreenBrightnessDozeConfig = clampAbsoluteBrightness(resources.getInteger(
+                    com.android.internal.R.integer.config_screenBrightnessDoze));
+        } else {
+            mScreenBrightnessDozeConfig = clampAbsoluteBrightness(screenBrightnessDozeProperty);
+        }
 
         mScreenBrightnessDimConfig = clampAbsoluteBrightness(resources.getInteger(
                 com.android.internal.R.integer.config_screenBrightnessDim));
@@ -301,9 +314,6 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
 
         mUseSoftwareAutoBrightnessConfig = resources.getBoolean(
                 com.android.internal.R.bool.config_automatic_brightness_available);
-
-        mAllowAutoBrightnessWhileDozingConfig = resources.getBoolean(
-                com.android.internal.R.bool.config_allowAutoBrightnessWhileDozing);
 
         mBrightnessRampRateFast = resources.getInteger(
                 com.android.internal.R.integer.config_brightness_ramp_rate_fast);
