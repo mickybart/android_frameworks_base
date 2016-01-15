@@ -18,7 +18,6 @@ package com.android.server.display;
 
 import android.content.res.Resources;
 import com.android.server.LocalServices;
-import com.android.server.lights.Light;
 import com.android.server.lights.LightsManager;
 
 import android.content.Context;
@@ -155,7 +154,7 @@ final class LocalDisplayAdapter extends DisplayAdapter {
 
     private final class LocalDisplayDevice extends DisplayDevice {
         private final int mBuiltInDisplayId;
-        private final Light mBacklight;
+        private final LightsManager mLightsManager;
         private final SparseArray<DisplayModeRecord> mSupportedModes = new SparseArray<>();
         private final ArrayList<Integer> mSupportedColorModes = new ArrayList<>();
 
@@ -182,10 +181,9 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                     colorModes, activeColorMode);
             updateColorModesLocked(colorModes, activeColorMode);
             if (mBuiltInDisplayId == SurfaceControl.BUILT_IN_DISPLAY_ID_MAIN) {
-                LightsManager lights = LocalServices.getService(LightsManager.class);
-                mBacklight = lights.getLight(LightsManager.LIGHT_ID_BACKLIGHT);
+                mLightsManager = LocalServices.getService(LightsManager.class);
             } else {
-                mBacklight = null;
+                mLightsManager = null;
             }
             mHdrCapabilities = SurfaceControl.getHdrCapabilities(displayToken);
         }
@@ -434,7 +432,7 @@ final class LocalDisplayAdapter extends DisplayAdapter {
             assert state != Display.STATE_OFF || brightness == PowerManager.BRIGHTNESS_OFF;
 
             final boolean stateChanged = (mState != state);
-            final boolean brightnessChanged = (mBrightness != brightness) && mBacklight != null;
+            final boolean brightnessChanged = (mBrightness != brightness) && mLightsManager != null;
             if (stateChanged || brightnessChanged) {
                 final int displayId = mBuiltInDisplayId;
                 final IBinder token = getDisplayTokenLocked();
@@ -509,7 +507,7 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                         Trace.traceBegin(Trace.TRACE_TAG_POWER, "setDisplayBrightness("
                                 + "id=" + displayId + ", brightness=" + brightness + ")");
                         try {
-                            mBacklight.setBrightness(brightness);
+                            mLightsManager.setBacklightBrightness(brightness);
                         } finally {
                             Trace.traceEnd(Trace.TRACE_TAG_POWER);
                         }
@@ -578,7 +576,7 @@ final class LocalDisplayAdapter extends DisplayAdapter {
             pw.println("mActiveColorMode=" + mActiveColorMode);
             pw.println("mState=" + Display.stateToString(mState));
             pw.println("mBrightness=" + mBrightness);
-            pw.println("mBacklight=" + mBacklight);
+            pw.println("mLightsManager=" + mLightsManager);
             pw.println("mDisplayInfos=");
             for (int i = 0; i < mDisplayInfos.length; i++) {
                 pw.println("  " + mDisplayInfos[i]);
