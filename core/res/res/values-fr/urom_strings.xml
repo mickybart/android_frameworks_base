@@ -23,4 +23,16 @@
   <string name="app_ops_permission_dialog_title">Autorisation</string>
   <string name="app_ops_permission_dialog_summary"><xliff:g id="app">%1$s</xliff:g> voudrait <xliff:g id="op">%2$s</xliff:g>.</string>
   <string name="app_ops_su">obtenir l\'accès root</string>
+
+  <!-- reboot -->
+  <string name="global_action_reboot">Redémarrer</string>
+  <string name="reboot_reboot">Redémarrer</string>
+  <string name="reboot_recovery">Recovery</string>
+  <string name="reboot_bootloader">Bootloader</string>
+  <string name="reboot_download">Download</string>
+  <string name="reboot_soft">Redémarrage logiciel</string>
+  <string name="reboot_title">Redémarrer</string>
+  <string name="reboot_confirm" product="tablet">Votre tablette va redémarrer</string>
+  <string name="reboot_confirm" product="default">Votre téléphone va redémarrer</string>
+  <string name="reboot_progress">Redémarrage en cours\u2026</string>
 </resources>
