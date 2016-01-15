@@ -177,6 +177,9 @@ public final class PowerManagerService extends SystemService
     private static final int HALT_MODE_REBOOT = 1;
     private static final int HALT_MODE_REBOOT_SAFE_MODE = 2;
 
+    // Lightbar On duration
+    private static final int BUTTON_ON_DURATION = 5 * 1000;
+
     private final Context mContext;
     private final ServiceThread mHandlerThread;
     private final PowerManagerHandler mHandler;
@@ -1626,6 +1629,14 @@ public final class PowerManagerService extends SystemService
                     nextTimeout = mLastUserActivityTime
                             + screenOffTimeout - screenDimDuration;
                     if (now < nextTimeout) {
+                        if (mLightsManager.isButtonsLightTimeout()) {
+                            if (now > mLastUserActivityTime + BUTTON_ON_DURATION) {
+                                mLightsManager.turnOffButtons();
+                            } else if (mDisplayPowerRequest.isBrightOrDim()) {
+                                mLightsManager.turnOnButtons();
+                                nextTimeout = now + BUTTON_ON_DURATION;
+                            }
+                        }
                         mUserActivitySummary = USER_ACTIVITY_SCREEN_BRIGHT;
                     } else {
                         nextTimeout = mLastUserActivityTime + screenOffTimeout;
