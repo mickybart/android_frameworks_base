@@ -42,11 +42,23 @@ public class LightsService extends SystemService {
 
         private LightImpl(int id) {
             mId = id;
+            mColor = 0;
         }
 
         @Override
         public void setBrightness(int brightness) {
             setBrightness(brightness, BRIGHTNESS_MODE_USER);
+        }
+
+        @Override
+        public void setBrightnessIfNotOff(int brightness) {
+            synchronized (this) {
+                if (mColor != 0) {
+                    int color = brightness & 0x000000ff;
+                    color = 0xff000000 | (color << 16) | (color << 8) | color;
+                    setLightLocked(color, LIGHT_FLASH_NONE, 0, 0, BRIGHTNESS_MODE_USER);
+                }
+            }
         }
 
         @Override
@@ -215,7 +227,8 @@ public class LightsService extends SystemService {
     private final LightsManager mService = new LightsManager() {
         @Override
         public Light getLight(int id) {
-            if (id < LIGHT_ID_COUNT) {
+            if ((id < LIGHT_ID_COUNT && id != LIGHT_ID_BUTTONS) ||
+                   (id == LIGHT_ID_BUTTONS && mButtonsLightMode != LIGHT_ID_BUTTONS_DISABLE)) {
                 return mLights[id];
             } else {
                 return null;
