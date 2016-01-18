@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- QS Fast Charge Tile -->
+    <string name="qs_tile_fastcharge_off">Safe Charge</string>
+    <string name="qs_tile_fastcharge">Fast Charge</string>
+    <string name="quick_settings_fastcharge_label">USB Fast Charge</string>
+</resources>
