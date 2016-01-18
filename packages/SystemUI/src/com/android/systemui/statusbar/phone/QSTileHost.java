@@ -47,6 +47,7 @@ import com.android.systemui.qs.tiles.CellularTile;
 import com.android.systemui.qs.tiles.ColorInversionTile;
 import com.android.systemui.qs.tiles.DataSaverTile;
 import com.android.systemui.qs.tiles.DndTile;
+import com.android.systemui.qs.tiles.FastChargeTile;
 import com.android.systemui.qs.tiles.FlashlightTile;
 import com.android.systemui.qs.tiles.HotspotTile;
 import com.android.systemui.qs.tiles.IntentTile;
@@ -447,6 +448,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         else if (tileSpec.equals(NightModeTile.NIGHT_MODE_SPEC))
             return new NightModeTile(this);
         // Intent tiles.
+        else if (tileSpec.equals("fastcharge")) return new FastChargeTile(this);
         else if (tileSpec.startsWith(IntentTile.PREFIX)) return IntentTile.create(this,tileSpec);
         else if (tileSpec.startsWith(CustomTile.PREFIX)) return CustomTile.create(this,tileSpec);
         else {
