@@ -4,4 +4,9 @@
     <string name="qs_tile_fastcharge_off">Safe Charge</string>
     <string name="qs_tile_fastcharge">Fast Charge</string>
     <string name="quick_settings_fastcharge_label">USB Fast Charge</string>
+
+    <!-- QS Night/Day Mode Tile -->
+    <string name="qs_tile_screen_color_day">Day</string>
+    <string name="qs_tile_screen_color_night">Night</string>
+    <string name="quick_settings_screen_color_label">Day and Night</string>
 </resources>
