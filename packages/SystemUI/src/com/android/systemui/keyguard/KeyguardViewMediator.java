@@ -57,6 +57,8 @@ import android.view.WindowManagerPolicy;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.android.systemui.qs.tiles.LockscreenToggleTile;
+
 import com.android.internal.policy.IKeyguardDrawnCallback;
 import com.android.internal.policy.IKeyguardExitCallback;
 import com.android.internal.policy.IKeyguardStateCallback;
@@ -135,6 +137,10 @@ public class KeyguardViewMediator extends SystemUI {
 
     private static final String DELAYED_KEYGUARD_ACTION =
         "com.android.internal.policy.impl.PhoneWindowManager.DELAYED_KEYGUARD";
+
+    private static final String KEYGUARD_SERVICE_ACTION_STATE_CHANGE =
+            "com.android.internal.action.KEYGUARD_SERVICE_STATE_CHANGED";
+    private static final String KEYGUARD_SERVICE_EXTRA_ACTIVE = "active";
 
     // used for handler messages
     private static final int SHOW = 2;
@@ -250,6 +256,11 @@ public class KeyguardViewMediator extends SystemUI {
      * var being non-null as an indicator that there is an in progress request.
      */
     private IKeyguardExitCallback mExitSecureCallback;
+
+    /**
+     * Whether we are bound to the service delegate
+     */
+    private boolean mKeyguardBound;
 
     // the properties of the keyguard
 
@@ -563,6 +574,8 @@ public class KeyguardViewMediator extends SystemUI {
         mShowKeyguardWakeLock.setReferenceCounted(false);
 
         mContext.registerReceiver(mBroadcastReceiver, new IntentFilter(DELAYED_KEYGUARD_ACTION));
+        mContext.registerReceiver(mBroadcastReceiver, new IntentFilter(KEYGUARD_SERVICE_ACTION_STATE_CHANGE),
+                android.Manifest.permission.CONTROL_KEYGUARD, null);
 
         mKeyguardDisplayManager = new KeyguardDisplayManager(mContext);
 
@@ -766,6 +779,10 @@ public class KeyguardViewMediator extends SystemUI {
 
     private void cancelDoKeyguardLaterLocked() {
         mDelayedShowingSequence++;
+    }
+
+    public boolean isKeyguardBound() {
+        return mKeyguardBound;
     }
 
     /**
@@ -1249,6 +1266,11 @@ public class KeyguardViewMediator extends SystemUI {
                         doKeyguardLocked(null);
                     }
                 }
+            } else if (KEYGUARD_SERVICE_ACTION_STATE_CHANGE.equals(intent.getAction())) {
+                mKeyguardBound = intent.getBooleanExtra(KEYGUARD_SERVICE_EXTRA_ACTIVE, false);
+                context.sendBroadcast(new Intent(
+                        LockscreenToggleTile.ACTION_APPLY_LOCKSCREEN_STATE)
+                        .setPackage(context.getPackageName()));
             }
         }
     };

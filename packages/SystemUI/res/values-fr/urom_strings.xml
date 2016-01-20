@@ -9,4 +9,8 @@
     <string name="qs_tile_screen_color_day">Jour</string>
     <string name="qs_tile_screen_color_night">Nuit</string>
     <string name="quick_settings_screen_color_label">Jour et Nuit</string>
+
+    <!-- QS Lockscreen Tile -->
+    <string name="quick_settings_lockscreen_label">Écran de verrouillage</string>
+    <string name="quick_settings_lockscreen_label_enforced">Écran de verrouillage forcé</string>
 </resources>
