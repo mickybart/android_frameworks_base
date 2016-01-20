@@ -4,4 +4,8 @@
     <string name="qs_tile_fastcharge_off">Charge standard</string>
     <string name="qs_tile_fastcharge">Charge rapide</string>
     <string name="quick_settings_fastcharge_label">USB Charge rapide</string>
+
+    <!-- QS Lockscreen Tile -->
+    <string name="quick_settings_lockscreen_label">Écran de verrouillage</string>
+    <string name="quick_settings_lockscreen_label_enforced">Écran de verrouillage forcé</string>
 </resources>
