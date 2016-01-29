@@ -556,6 +556,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     int mQemuHwMainkeysLayout;
     boolean mQemuHwMainkeysMusic;
     boolean mQemuHwMainkeysIsLongPress;
+    boolean mKeysIsLongPress;
 
     // support for activating the lock screen while the screen is on
     boolean mAllowLockscreenWhenOn;
@@ -653,6 +654,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_POWER_LONG_PRESS = 14;
     private static final int MSG_UPDATE_DREAMING_SLEEP_TOKEN = 15;
     private static final int MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK = 16;
+    private static final int MSG_CAMERA_LONG_PRESS = 17;
 
     private class PolicyHandler extends Handler {
         @Override
@@ -710,6 +712,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     dispatchMediaKeyWithWakeLockToAudioService(event);
                     dispatchMediaKeyWithWakeLockToAudioService(
                             KeyEvent.changeAction(event, KeyEvent.ACTION_UP));
+                    break;
+                case MSG_CAMERA_LONG_PRESS:
+                    mKeysIsLongPress = true;
                     break;
             }
         }
@@ -5176,14 +5181,23 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
             case KeyEvent.KEYCODE_CAMERA : {
                 if (down) {
-                    Intent intent;
-                    if (keyguardActive) {
-                        intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE);
-                    } else {
-                        intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+                    mKeysIsLongPress = false;
+                    scheduleLongPressKeyEvent(event, KeyEvent.KEYCODE_CAMERA);
+                    // Consume key down events of all presses.
+                    break;
+                } else {
+                    mHandler.removeMessages(MSG_CAMERA_LONG_PRESS);
+                    // Consume key up events of long presses only.
+                    if(mKeysIsLongPress) {
+                        Intent intent;
+                        if (keyguardActive) {
+                            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE);
+                        } else {
+                            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+                        }
+                        isWakeKey = true;
+                        startActivityAsUser(intent, UserHandle.CURRENT_OR_SELF);
                     }
-                    isWakeKey = true;
-                    startActivityAsUser(intent, UserHandle.CURRENT_OR_SELF);
                 }
                 break;
             }
@@ -5334,7 +5348,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private void scheduleLongPressKeyEvent(KeyEvent origEvent, int keyCode) {
         KeyEvent event = new KeyEvent(origEvent.getDownTime(), origEvent.getEventTime(),
                 origEvent.getAction(), keyCode, 0);
-        Message msg = mHandler.obtainMessage(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK, event);
+        Message msg;
+        if (keyCode == KeyEvent.KEYCODE_CAMERA) {
+            msg = mHandler.obtainMessage(MSG_CAMERA_LONG_PRESS, event);
+        } else {
+            msg = mHandler.obtainMessage(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK, event);
+        }
         msg.setAsynchronous(true);
         mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
     }
