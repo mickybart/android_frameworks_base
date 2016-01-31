@@ -57,6 +57,7 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
@@ -177,8 +178,7 @@ public class UsageStatsService extends SystemService implements
         getContext().registerReceiverAsUser(new UserActionsReceiver(), UserHandle.ALL, userActions,
                 null, null);
 
-        mAppIdleEnabled = getContext().getResources().getBoolean(
-                com.android.internal.R.bool.config_enableAutoPowerModes);
+        mAppIdleEnabled = SystemProperties.getBoolean("persist.sys.autopower", true);
         if (mAppIdleEnabled) {
             IntentFilter deviceStates = new IntentFilter(BatteryManager.ACTION_CHARGING);
             deviceStates.addAction(BatteryManager.ACTION_DISCHARGING);
