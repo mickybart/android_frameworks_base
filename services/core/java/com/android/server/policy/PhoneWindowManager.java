@@ -5692,27 +5692,18 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             case KeyEvent.KEYCODE_CAMERA : {
-                if (!interactive) {
+                if (!interactive && down) {
                     isWakeKey = true;
-                }
-
-                if (down) {
+                    launchCameraApp(keyguardActive);
+                } else if (interactive && down) {
                     mKeysIsLongPress = false;
                     scheduleLongPressKeyEvent(event, KeyEvent.KEYCODE_CAMERA);
                     // Consume key down events of all presses.
-                    break;
-                } else {
+                } else if (interactive) {
                     mHandler.removeMessages(MSG_CAMERA_LONG_PRESS);
                     // Consume key up events of long presses only.
                     if(mKeysIsLongPress) {
-                        Intent intent;
-                        if (keyguardActive) {
-                            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE);
-                        } else {
-                            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
-                        }
-                        isWakeKey = true;
-                        startActivityAsUser(intent, UserHandle.CURRENT_OR_SELF);
+                        launchCameraApp(keyguardActive);
                     }
                 }
                 break;
@@ -5897,6 +5888,17 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
         msg.setAsynchronous(true);
         mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
+    }
+
+    /* Launch Camera Application */
+    private void launchCameraApp(boolean secure) {
+        Intent intent;
+        if (secure) {
+            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE);
+        } else {
+            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+        }
+        startActivityAsUser(intent, UserHandle.CURRENT_OR_SELF);
     }
 
     /**
