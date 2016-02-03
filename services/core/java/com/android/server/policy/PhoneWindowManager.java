@@ -1630,7 +1630,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         } else {
             /* QEMU_HW_MAINKEYS_LAYOUT_50 for Nozomi */
-            mLongPressOnHomeBehavior = LONG_PRESS_HOME_NOTHING;
+            mLongPressOnHomeBehavior = LONG_PRESS_HOME_ASSIST;
             mDoubleTapOnHomeBehavior = LONG_PRESS_HOME_NOTHING;
         }
     }
