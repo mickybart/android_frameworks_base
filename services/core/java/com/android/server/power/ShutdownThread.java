@@ -103,6 +103,9 @@ public final class ShutdownThread extends Thread {
     // Indicates whether we are rebooting into safe mode
     public static final String REBOOT_SAFEMODE_PROPERTY = "persist.sys.safemode";
 
+    // Indicates whether we are rebooting to flash
+    public static final String REBOOT_FLASH_PROPERTY = "sys.reboot.flash.requested";
+
     // static instance of this thread
     private static final ShutdownThread sInstance = new ShutdownThread();
 
@@ -286,7 +289,13 @@ public final class ShutdownThread extends Thread {
     public static void reboot(final Context context, String reason, boolean confirm) {
         mReboot = true;
         mRebootSafeMode = false;
-        mRebootUpdate = false;
+
+        if (PowerManager.REBOOT_RECOVERY.equals(reason)) {
+            mRebootUpdate = SystemProperties.getBoolean(REBOOT_FLASH_PROPERTY, false); 
+        } else {
+            mRebootUpdate = false;
+        }
+
         mRebootAdvMode = false;
         mRebootReason = reason;
         shutdownInner(context, confirm);
