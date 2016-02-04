@@ -289,13 +289,7 @@ public final class ShutdownThread extends Thread {
     public static void reboot(final Context context, String reason, boolean confirm) {
         mReboot = true;
         mRebootSafeMode = false;
-
-        if (PowerManager.REBOOT_RECOVERY.equals(reason)) {
-            mRebootUpdate = SystemProperties.getBoolean(REBOOT_FLASH_PROPERTY, false); 
-        } else {
-            mRebootUpdate = false;
-        }
-
+        mRebootUpdate = false;
         mRebootAdvMode = false;
         mRebootReason = reason;
         shutdownInner(context, confirm);
@@ -338,8 +332,9 @@ public final class ShutdownThread extends Thread {
         //   Condition: mRebootAdvMode == true
         // Path 1: Reboot to recovery and install the update
         //   Condition: mRebootReason == REBOOT_RECOVERY and mRebootUpdate == True
-        //   (mRebootUpdate is set by checking if /cache/recovery/uncrypt_file exists.)
+        //   (mRebootUpdate is set by checking if /cache/recovery/uncrypt_file exists or REBOOT_FLASH_PROPERTY)
         //   UI: progress bar
+
         //
         // Path 2: Reboot to recovery for factory reset
         //   Condition: mRebootReason == REBOOT_RECOVERY
@@ -353,7 +348,9 @@ public final class ShutdownThread extends Thread {
             pd.setMessage(context.getText(com.android.internal.R.string.reboot_progress));
             pd.setIndeterminate(true);
         } else if (PowerManager.REBOOT_RECOVERY.equals(mRebootReason)) {
-            mRebootUpdate = new File(UNCRYPT_PACKAGE_FILE).exists();
+            mRebootUpdate = SystemProperties.getBoolean(REBOOT_FLASH_PROPERTY, false) ||
+                                                        new File(UNCRYPT_PACKAGE_FILE).exists();
+
             if (mRebootUpdate) {
                 pd.setTitle(context.getText(com.android.internal.R.string.reboot_to_update_title));
                 pd.setMessage(context.getText(
