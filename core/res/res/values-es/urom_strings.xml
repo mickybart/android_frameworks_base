@@ -17,14 +17,36 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="global_action_reboot">Reiniciar</string>
-  <string name="reboot_reboot">Reiniciar</string>
-  <string name="reboot_recovery">Modo Recovery</string>
-  <string name="reboot_bootloader">Modo Bootloader</string>
-  <string name="reboot_download">Modo Download</string>
-  <string name="reboot_soft">Reinicio rápido</string>
-  <string name="reboot_title">Reiniciar</string>
-  <string name="reboot_confirm" product="tablet">El tablet se reiniciará.</string>
-  <string name="reboot_confirm" product="default">El teléfono se reiniciará.</string>
-  <string name="reboot_progress">Reiniciando\u2026</string>
+    <!-- Names of default profiles. -->
+    <!-- label for item that reboots the phone in phone options dialog -->
+    <string name="global_action_reboot">Reinicio</string>
+
+    <!-- Reboot menu -->
+    <!-- Button to reboot the phone, within the Reboot Options dialog -->
+    <string name="reboot_reboot">Reinicio</string>
+    <!-- Button to reboot the phone into recovery, within the Reboot Options dialog -->
+    <string name="reboot_recovery">Recovery</string>
+    <!-- Button to reboot the phone into bootloader, within the Reboot Options dialog -->
+    <string name="reboot_bootloader">Bootloader</string>
+    <!-- Button to reboot the phone into download, within the Reboot Options dialog -->
+    <string name="reboot_download">Descarga</string>
+    <!-- Button to soft reboot the device, within the Reboot Options dialog -->
+    <string name="reboot_soft">Reinicio rápidot</string>
+
+    <!-- Title of dialog to confirm rebooting. -->
+    <string name="reboot_title">Reinicio</string>
+
+    <!-- Reboot Confirmation Dialog.  When the user chooses to reboot the device, there will
+         be a confirmation dialog.  This is the message. -->
+    <string name="reboot_confirm" product="tablet">Su tablet se reiniciará.</string>
+    <string name="reboot_confirm" product="default">Su teléfono se reiniciará.</string>
+
+    <!-- Reboot Progress Dialog. This is shown if the user chooses to reboot the phone. -->
+    <string name="reboot_progress">Reiniciando\u2026</string>
+
+    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_fakePackageSignature">Cambiar la firma de la aplicación</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_fakePackageSignature">Permite a la aplicación simular ser otra aplicación diferente, y engañar a los sistemas de seguridad.</string>
+
 </resources>
