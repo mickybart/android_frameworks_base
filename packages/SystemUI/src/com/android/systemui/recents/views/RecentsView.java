@@ -355,6 +355,7 @@ public class RecentsView extends FrameLayout implements TaskStackView.TaskStackV
         if (mFloatingButton != null) {
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mFloatingButton.getLayoutParams();
             params.bottomMargin = mConfig.systemInsets.bottom + getResources().getDimensionPixelSize(R.dimen.floating_action_button_margin_bottom);
+            params.rightMargin = mConfig.systemInsets.right + getResources().getDimensionPixelSize(R.dimen.floating_action_button_margin_side);
             mFloatingButton.setLayoutParams(params);
         }
 
