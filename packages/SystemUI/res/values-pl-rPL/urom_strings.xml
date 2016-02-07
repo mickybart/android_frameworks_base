@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- QS Fast Charge Tile -->
+    <string name="qs_tile_fastcharge_off">Normalne Ładowanie</string>
+    <string name="qs_tile_fastcharge">Szybkie Ładowanie</string>
+    <string name="quick_settings_fastcharge_label">USB Fast Charge</string>
+
+    <!-- QS Night/Day Mode Tile -->
+    <string name="qs_tile_screen_color_day">Dzień</string>
+    <string name="qs_tile_screen_color_night">Noc</string>
+    <string name="quick_settings_screen_color_label">Dzień i Noc</string>
+
+    <!-- QS Lockscreen Tile -->
+    <string name="quick_settings_lockscreen_label">Ekran Blokady</string>
+    <string name="quick_settings_lockscreen_label_enforced">Przymusowy Ekran Blokady</string>
+    <!-- Content description of the lock screen tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_off">Ekran Blokady Wyłączony.</string>
+    <!-- Content description of the lock screen tile in quick settings when on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_on">Ekran Blokady Włączony.</string>
+    <!-- Announcement made when lock screen changes to off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_changed_off">Ekran blokady został wyłączony.</string>
+    <!-- Announcement made when lock screen changes to on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_changed_on">Ekran blokady został włączony.</string>
+</resources>
