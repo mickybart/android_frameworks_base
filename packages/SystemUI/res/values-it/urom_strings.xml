@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- QS Fast Charge Tile -->
+    <string name="qs_tile_fastcharge_off">Ricarica sicura</string>
+    <string name="qs_tile_fastcharge">Ricarica rapida</string>
+    <string name="quick_settings_fastcharge_label">Ricarica rapida USB</string>
+
+    <!-- QS Night/Day Mode Tile -->
+    <string name="qs_tile_screen_color_day">Giorno</string>
+    <string name="qs_tile_screen_color_night">Notte</string>
+    <string name="quick_settings_screen_color_label">Giorno e Notte</string>
+
+    <!-- QS Lockscreen Tile -->
+    <string name="quick_settings_lockscreen_label">Schermata di blocco</string>
+    <string name="quick_settings_lockscreen_label_enforced">Schermata di blocco forzata</string>
+    <!-- Content description of the lock screen tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_off">Schermata di blocco disabilitata.</string>
+    <!-- Content description of the lock screen tile in quick settings when on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_on">Schermata di blocco abilitata.</string>
+    <!-- Announcement made when lock screen changes to off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_changed_off">La schermata di blocco è stata disabilitata</string>
+    <!-- Announcement made when lock screen changes to on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_changed_on">La schermata di blocco è stta abilitata.</string>
+</resources>
