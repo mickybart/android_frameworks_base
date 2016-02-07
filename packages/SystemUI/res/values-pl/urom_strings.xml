@@ -21,4 +21,9 @@
     <string name="accessibility_quick_settings_lock_screen_changed_off">Ekran blokady został wyłączony.</string>
     <!-- Announcement made when lock screen changes to on (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_lock_screen_changed_on">Ekran blokady został włączony.</string>
+
+    <!-- QS ADB over Network -->
+    <string name="qs_tile_network_adb_on">ADB</string>
+    <string name="qs_tile_network_adb_off">ADB</string>
+    <string name="quick_settings_network_adb_label">ADB przez sieć</string>
 </resources>
