@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- QS Fast Charge Tile -->
+    <string name="qs_tile_fastcharge_off">Сигурно пуњење</string>
+    <string name="qs_tile_fastcharge">Брзо пуњење</string>
+    <string name="quick_settings_fastcharge_label">USB брзо пуњење</string>
+
+    <!-- QS Night/Day Mode Tile -->
+    <string name="qs_tile_screen_color_day">Дан</string>
+    <string name="qs_tile_screen_color_night">Ноћ</string>
+    <string name="quick_settings_screen_color_label">Дан и ноћ</string>
+
+    <!-- QS Lockscreen Tile -->
+    <string name="quick_settings_lockscreen_label">Закључавање екрана</string>
+    <string name="quick_settings_lockscreen_label_enforced">Принудно закључавање екрана</string>
+    <!-- Content description of the lock screen tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_off">Закључавање екрана неактивно.</string>
+    <!-- Content description of the lock screen tile in quick settings when on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_on">Закључавање екрана активно.</string>
+    <!-- Announcement made when lock screen changes to off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_changed_off">Закључавање екрана искључено.</string>
+    <!-- Announcement made when lock screen changes to on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_changed_on">Закључавање екрана укључено.</string>
+</resources>
