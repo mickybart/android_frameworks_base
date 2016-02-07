@@ -8,4 +8,9 @@
     <!-- QS Lockscreen Tile -->
     <string name="quick_settings_lockscreen_label">Écran de verrouillage</string>
     <string name="quick_settings_lockscreen_label_enforced">Écran de verrouillage forcé</string>
+
+    <!-- QS ADB over Network -->
+    <string name="qs_tile_network_adb_on">ADB</string>
+    <string name="qs_tile_network_adb_off">ADB</string>
+    <string name="quick_settings_network_adb_label">ADB connecté</string>
 </resources>
