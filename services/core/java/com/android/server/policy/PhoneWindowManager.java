@@ -1870,7 +1870,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         // Allow a system property to override this. Used by the emulator.
         // See also hasNavigationBar().
-        String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
+        String navBarOverride = SystemProperties.get("persist.qemu.hw.mainkeys");
         if ("1".equals(navBarOverride)) {
             mHasNavigationBar = false;
         } else if ("0".equals(navBarOverride)) {
