@@ -31,7 +31,7 @@
     <!-- Button to reboot the phone into download, within the Reboot Options dialog -->
     <string name="reboot_download">Descarga</string>
     <!-- Button to soft reboot the device, within the Reboot Options dialog -->
-    <string name="reboot_soft">Reinicio rápidot</string>
+    <string name="reboot_soft">Reinicio rápido</string>
 
     <!-- Title of dialog to confirm rebooting. -->
     <string name="reboot_title">Reinicio</string>
