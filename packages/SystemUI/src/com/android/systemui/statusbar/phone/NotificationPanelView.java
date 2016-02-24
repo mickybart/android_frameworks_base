@@ -30,6 +30,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.PowerManager;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.MathUtils;
 import android.view.GestureDetector;
@@ -162,6 +163,7 @@ public class NotificationPanelView extends PanelView implements
     // Used for two finger gesture as well as accessibility shortcut to QS.
     private boolean mQsExpandImmediate;
     private boolean mTwoFingerQsExpandPossible;
+    private boolean mOneFingerQsExpandPossible;
 
     /**
      * If we are in a panel collapsing motion, we reset scrollY of our scroll view but still
@@ -224,6 +226,8 @@ public class NotificationPanelView extends PanelView implements
                 return true;
             }
         });
+
+        mOneFingerQsExpandPossible = SystemProperties.getBoolean("persist.sys.qs_onefinger", true);
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
@@ -843,13 +847,17 @@ public class NotificationPanelView extends PanelView implements
                 && (event.isButtonPressed(MotionEvent.BUTTON_SECONDARY)
                         || event.isButtonPressed(MotionEvent.BUTTON_TERTIARY));
 
-        final float w = getMeasuredWidth();
-        final float x = event.getX();
-        float region = (w * (1.f/3.f)); // TODO overlay region fraction?
-        final boolean showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x)
-                        && mStatusBarState == StatusBarState.SHADE;
-
-        return twoFingerDrag || showQsOverride || stylusButtonClickDrag || mouseButtonClickDrag;
+        if (mOneFingerQsExpandPossible) {
+            final float w = getMeasuredWidth();
+            final float x = event.getX();
+            float region = (w * (1.f/3.f)); // TODO overlay region fraction?
+            final boolean showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x)
+                            && mStatusBarState == StatusBarState.SHADE;
+    
+            return twoFingerDrag || showQsOverride || stylusButtonClickDrag || mouseButtonClickDrag;
+        } else {
+            return twoFingerDrag || stylusButtonClickDrag || mouseButtonClickDrag;
+        }
     }
 
     private void handleQsDown(MotionEvent event) {
