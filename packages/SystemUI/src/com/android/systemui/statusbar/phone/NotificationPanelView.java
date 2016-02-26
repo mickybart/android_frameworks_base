@@ -27,6 +27,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.PowerManager;
+import android.os.SystemProperties;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.MathUtils;
@@ -183,6 +184,8 @@ public class NotificationPanelView extends PanelView implements
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
 
+    private boolean mOneFingerQsExpandPossible;
+
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setWillNotDraw(!DEBUG);
@@ -195,6 +198,8 @@ public class NotificationPanelView extends PanelView implements
                 return true;
             }
         });
+
+        mOneFingerQsExpandPossible = SystemProperties.getBoolean("persist.sys.qs_onefinger", true);
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
@@ -704,7 +709,7 @@ public class NotificationPanelView extends PanelView implements
         boolean twoFingerQsEvent = mTwoFingerQsExpandPossible
                 && (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN
                 && event.getPointerCount() == 2);
-        boolean oneFingerQsOverride = event.getActionMasked() == MotionEvent.ACTION_DOWN
+        boolean oneFingerQsOverride = mOneFingerQsExpandPossible && event.getActionMasked() == MotionEvent.ACTION_DOWN
                 && shouldQuickSettingsIntercept(event.getX(), event.getY(), -1, false);
         if ((twoFingerQsEvent || oneFingerQsOverride)
                 && event.getY(event.getActionIndex()) < mStatusBarMinHeight) {
