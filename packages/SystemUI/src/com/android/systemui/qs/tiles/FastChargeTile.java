@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import com.android.internal.logging.MetricsConstants;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
 
@@ -61,11 +60,6 @@ public class FastChargeTile extends QSTile<QSTile.BooleanState> {
                 R.drawable.ic_qs_fastcharge_on : R.drawable.ic_qs_fastcharge_off);
         state.label = mContext.getString(state.value
                 ? R.string.qs_tile_fastcharge : R.string.qs_tile_fastcharge_off);
-    }
-
-    @Override
-    public int getMetricsCategory() {
-        return MetricsConstants.QS_PANEL;
     }
 
     @Override

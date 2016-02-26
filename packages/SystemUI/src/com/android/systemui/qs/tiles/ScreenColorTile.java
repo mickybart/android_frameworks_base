@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.SystemProperties;
 
-import com.android.internal.logging.MetricsConstants;
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
 
@@ -66,11 +65,6 @@ public class ScreenColorTile extends QSTile<QSTile.BooleanState> {
                 R.drawable.ic_qs_screen_color_day : R.drawable.ic_qs_screen_color_night);
         state.label = mContext.getString(state.value
                 ? R.string.qs_tile_screen_color_day : R.string.qs_tile_screen_color_night);
-    }
-
-    @Override
-    public int getMetricsCategory() {
-        return MetricsConstants.QS_PANEL;
     }
 
     @Override
