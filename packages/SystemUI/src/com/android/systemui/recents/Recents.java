@@ -34,7 +34,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.os.UserHandle;
-import android.provider.Settings;
 import android.util.MutableBoolean;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -89,7 +88,6 @@ public class Recents extends SystemUI
     final public static String ACTION_START_ENTER_ANIMATION = "action_start_enter_animation";
     final public static String ACTION_TOGGLE_RECENTS_ACTIVITY = "action_toggle_recents_activity";
     final public static String ACTION_HIDE_RECENTS_ACTIVITY = "action_hide_recents_activity";
-    final public static String ACTION_ALT_TAB_TRAVERSAL = "action_alt_tab_traversal";
 
     final static int sMinToggleDelay = 350;
 
@@ -282,12 +280,6 @@ public class Recents extends SystemUI
     @ProxyFromPrimaryToCurrentUser
     @Override
     public void showRecents(boolean triggeredFromAltTab, View statusBarView) {
-        // Ensure the device has been provisioned before allowing the user to interact with
-        // recents
-        if (!isDeviceProvisioned()) {
-            return;
-        }
-
         if (mSystemServicesProxy.isForegroundUserOwner()) {
             showRecentsInternal(triggeredFromAltTab);
         } else {
@@ -302,15 +294,7 @@ public class Recents extends SystemUI
         mTriggeredFromAltTab = triggeredFromAltTab;
 
         try {
-            // If Recents is the front most activity
-            ActivityManager.RunningTaskInfo topTask = mSystemServicesProxy.getTopMostTask();
-            if (topTask != null && mSystemServicesProxy.isRecentsTopMost(topTask, null)) {
-                Intent intent = createLocalBroadcastIntent(mContext, ACTION_ALT_TAB_TRAVERSAL);
-                intent.putExtra(EXTRA_TRIGGERED_FROM_ALT_TAB, triggeredFromAltTab);
-                mContext.sendBroadcastAsUser(intent, UserHandle.CURRENT);
-            } else {
-                startRecentsActivity();
-            }
+            startRecentsActivity();
         } catch (ActivityNotFoundException e) {
             Console.logRawError("Failed to launch RecentAppsIntent", e);
         }
@@ -320,12 +304,6 @@ public class Recents extends SystemUI
     @ProxyFromPrimaryToCurrentUser
     @Override
     public void hideRecents(boolean triggeredFromAltTab, boolean triggeredFromHomeKey) {
-        // Ensure the device has been provisioned before allowing the user to interact with
-        // recents
-        if (!isDeviceProvisioned()) {
-            return;
-        }
-
         if (mSystemServicesProxy.isForegroundUserOwner()) {
             hideRecentsInternal(triggeredFromAltTab, triggeredFromHomeKey);
         } else {
@@ -352,12 +330,6 @@ public class Recents extends SystemUI
     @ProxyFromPrimaryToCurrentUser
     @Override
     public void toggleRecents(Display display, int layoutDirection, View statusBarView) {
-        // Ensure the device has been provisioned before allowing the user to interact with
-        // recents
-        if (!isDeviceProvisioned()) {
-            return;
-        }
-
         if (mSystemServicesProxy.isForegroundUserOwner()) {
             toggleRecentsInternal();
         } else {
@@ -381,12 +353,6 @@ public class Recents extends SystemUI
     @ProxyFromPrimaryToCurrentUser
     @Override
     public void preloadRecents() {
-        // Ensure the device has been provisioned before allowing the user to interact with
-        // recents
-        if (!isDeviceProvisioned()) {
-            return;
-        }
-
         if (mSystemServicesProxy.isForegroundUserOwner()) {
             preloadRecentsInternal();
         } else {
@@ -503,12 +469,6 @@ public class Recents extends SystemUI
 
     @Override
     public void showNextAffiliatedTask() {
-        // Ensure the device has been provisioned before allowing the user to interact with
-        // recents
-        if (!isDeviceProvisioned()) {
-            return;
-        }
-
         // Keep track of when the affiliated task is triggered
         MetricsLogger.count(mContext, "overview_affiliated_task_next", 1);
         showRelativeAffiliatedTask(true);
@@ -516,12 +476,6 @@ public class Recents extends SystemUI
 
     @Override
     public void showPrevAffiliatedTask() {
-        // Ensure the device has been provisioned before allowing the user to interact with
-        // recents
-        if (!isDeviceProvisioned()) {
-            return;
-        }
-
         // Keep track of when the affiliated task is triggered
         MetricsLogger.count(mContext, "overview_affiliated_task_prev", 1);
         showRelativeAffiliatedTask(false);
@@ -788,7 +742,7 @@ public class Recents extends SystemUI
         RecentsTaskLoader loader = RecentsTaskLoader.getInstance();
         RecentsConfiguration.reinitialize(mContext, mSystemServicesProxy);
 
-        if (mTriggeredFromAltTab || sInstanceLoadPlan == null) {
+        if (sInstanceLoadPlan == null) {
             // Create a new load plan if onPreloadRecents() was never triggered
             sInstanceLoadPlan = loader.createLoadPlan(mContext);
         }
@@ -808,7 +762,7 @@ public class Recents extends SystemUI
             return;
         }
 
-        if (mTriggeredFromAltTab || !sInstanceLoadPlan.hasTasks()) {
+        if (!sInstanceLoadPlan.hasTasks()) {
             loader.preloadTasks(sInstanceLoadPlan, isTopTaskHome);
         }
         ArrayList<TaskStack> stacks = sInstanceLoadPlan.getAllTaskStacks();
@@ -931,14 +885,6 @@ public class Recents extends SystemUI
         if (statusBar != null) {
             statusBar.showScreenPinningRequest(false);
         }
-    }
-
-    /**
-     * @return whether this device is provisioned.
-     */
-    private boolean isDeviceProvisioned() {
-        return Settings.Global.getInt(mContext.getContentResolver(),
-                Settings.Global.DEVICE_PROVISIONED, 0) != 0;
     }
 
     /**
