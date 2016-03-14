@@ -1,0 +1,10 @@
+--- policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
++++ policy/src/com/android/internal/policy/impl/PhoneWindowManager.java
+@@ -1466,6 +1472,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+             mQemuHwMainkeysLayout = QEMU_HW_MAINKEYS_LAYOUT_50;
+         }
+         mQemuHwMainkeysMusic = (SystemProperties.getInt("persist.qemu.hw.mainkeys_music", QEMU_HW_MAINKEYS_MUSIC) == QEMU_HW_MAINKEYS_MUSIC);
++        mQemuHwCamerakey = SystemProperties.getInt("persist.qemu.hw.camerakey", QEMU_HW_CAMERAKEY_DEFAULT);
+ 
+         mAllowTheaterModeWakeFromKey = mContext.getResources().getBoolean(
+                 com.android.internal.R.bool.config_allowTheaterModeWakeFromKey);
