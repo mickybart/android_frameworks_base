@@ -25,5 +25,5 @@
     <!-- QS ADB over Network -->
     <string name="qs_tile_network_adb_on">ADB</string>
     <string name="qs_tile_network_adb_off">ADB</string>
-    <string name="quick_settings_network_adb_label">ADB através da rede</string>
+    <string name="quick_settings_network_adb_label">ADB sobre rede</string>
 </resources>
