@@ -211,6 +211,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     //Qemu Hw Mainkeys
     static final int QEMU_HW_MAINKEYS_MUSIC = 1;
+    
+    //Qemu Hw Camerakey
+    static final int QEMU_HW_CAMERAKEY_DISABLED = 0;
+    static final int QEMU_HW_CAMERAKEY_DEFAULT = 1;
+    static final int QEMU_HW_CAMERAKEY_LPO = 2;
 
     static final int DOUBLE_TAP_HOME_NOTHING = 0;
     static final int DOUBLE_TAP_HOME_RECENT_SYSTEM_UI = 1;
@@ -642,6 +647,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     //Qemu Hw Mainkeys
     boolean mQemuHwMainkeysMusic;
+    int mQemuHwCamerakey;
     boolean mQemuHwMainkeysIsLongPress;
     boolean mKeysIsLongPress;
 
@@ -1647,6 +1653,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 com.android.internal.R.bool.config_enableTranslucentDecor);
 
         mQemuHwMainkeysMusic = (SystemProperties.getInt("persist.qemu.hw.mainkeys_music", QEMU_HW_MAINKEYS_MUSIC) == QEMU_HW_MAINKEYS_MUSIC);
+        mQemuHwCamerakey = SystemProperties.getInt("persist.qemu.hw.camerakey", QEMU_HW_CAMERAKEY_DEFAULT);
 
         mAllowTheaterModeWakeFromKey = mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_allowTheaterModeWakeFromKey);
@@ -5859,18 +5866,22 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             case KeyEvent.KEYCODE_CAMERA : {
-                if (!interactive && down) {
-                    isWakeKey = true;
-                    launchCameraApp(keyguardActive);
-                } else if (interactive && down) {
-                    mKeysIsLongPress = false;
-                    scheduleLongPressKeyEvent(event, KeyEvent.KEYCODE_CAMERA);
-                    // Consume key down events of all presses.
-                } else if (interactive) {
-                    mHandler.removeMessages(MSG_CAMERA_LONG_PRESS);
-                    // Consume key up events of long presses only.
-                    if(mKeysIsLongPress) {
+                if (mQemuHwCamerakey != QEMU_HW_CAMERAKEY_DISABLED) {
+                    if (!interactive && down && mQemuHwCamerakey != QEMU_HW_CAMERAKEY_LPO) {
+                        mKeysIsLongPress = false;
+                        isWakeKey = true;
                         launchCameraApp(keyguardActive);
+                    } else if (down) {
+                        mKeysIsLongPress = false;
+                        scheduleLongPressKeyEvent(event, KeyEvent.KEYCODE_CAMERA);
+                        // Consume key down events of all presses.
+                    } else {
+                        mHandler.removeMessages(MSG_CAMERA_LONG_PRESS);
+                        // Consume key up events of long presses only.
+                        if(mKeysIsLongPress) {
+                            isWakeKey = true;
+                            launchCameraApp(keyguardActive);
+                        }
                     }
                 }
                 break;
@@ -6141,6 +6152,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             case KeyEvent.KEYCODE_MEDIA_RECORD:
             case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
             case KeyEvent.KEYCODE_MEDIA_AUDIO_TRACK:
+            case KeyEvent.KEYCODE_CAMERA:
                 return false;
         }
         return true;
