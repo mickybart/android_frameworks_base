@@ -27,7 +27,7 @@
     <!-- Button to reboot the phone into download, within the Reboot Options dialog -->
     <string name="reboot_download">Download</string>
     <!-- Button to soft reboot the device, within the Reboot Options dialog -->
-    <string name="reboot_soft">Reiniciar sem desligar</string>
+    <string name="reboot_soft">Reiniciar via software</string>
 
     <!-- Title of dialog to confirm rebooting. -->
     <string name="reboot_title">Reiniciar</string>
@@ -41,7 +41,7 @@
     <string name="reboot_progress">Reiniciando\u2026</string>
 
     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
-    <string name="permlab_fakePackageSignature">MAscarar assinatura de pacotes</string>
+    <string name="permlab_fakePackageSignature">Mascarar assinatura de pacotes</string>
     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permdesc_fakePackageSignature">Permite um aplicativo a finjir que é outro para enganar os sistemas de segurança.</string>
 
