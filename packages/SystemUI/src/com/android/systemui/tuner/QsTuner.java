@@ -204,6 +204,7 @@ public class QsTuner extends Fragment implements Callback {
         else if (spec.equals("screencolor")) return R.string.quick_settings_screen_color_label;
         else if (spec.equals("lockscreen")) return R.string.quick_settings_lockscreen_label;
         else if (spec.equals("network_adb")) return R.string.quick_settings_network_adb_label;
+        else if (spec.equals("caffeine")) return R.string.quick_settings_caffeine_label;
         return 0;
     }
 
@@ -451,6 +452,7 @@ public class QsTuner extends Fragment implements Callback {
             else if (mSpec.equals("screencolor")) return R.drawable.ic_qs_screen_color_night;
             else if (mSpec.equals("lockscreen")) return R.drawable.ic_qs_lock_screen_on;
             else if (mSpec.equals("network_adb")) return R.drawable.ic_qs_network_adb_on;
+            else if (mSpec.equals("caffeine")) return R.drawable.ic_qs_caffeine_on;
             return R.drawable.android;
         }
 
