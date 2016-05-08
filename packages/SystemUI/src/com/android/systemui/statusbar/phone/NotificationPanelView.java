@@ -209,7 +209,7 @@ public class NotificationPanelView extends PanelView implements
     };
     private NotificationGroupManager mGroupManager;
 
-    private boolean mDoubleTapToSleepEnabled = true;
+    private boolean mDoubleTapToSleepEnabled;
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
 
@@ -217,17 +217,20 @@ public class NotificationPanelView extends PanelView implements
         super(context, attrs);
         setWillNotDraw(!DEBUG);
         mFalsingManager = FalsingManager.getInstance(context);
-        mDoubleTapGesture = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-                if(pm != null)
-                    pm.goToSleep(e.getEventTime());
-                return true;
-            }
-        });
 
         mOneFingerQsExpandPossible = SystemProperties.getBoolean("persist.sys.qs_onefinger", true);
+        mDoubleTapToSleepEnabled = SystemProperties.getBoolean("persist.sys.statusbar.dt2s", true);
+        if (mDoubleTapToSleepEnabled) {
+            mDoubleTapGesture = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+                    if(pm != null)
+                        pm.goToSleep(e.getEventTime());
+                    return true;
+                }
+            });
+        }
     }
 
     public void setStatusBar(PhoneStatusBar bar) {
