@@ -27,6 +27,7 @@ import android.graphics.Rect;
 import android.media.session.MediaSessionLegacyHelper;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -58,7 +59,7 @@ public class StatusBarWindowView extends FrameLayout {
     private PhoneStatusBar mService;
     private final Paint mTransparentSrcPaint = new Paint();
 
-    private boolean mDoubleTapToSleepEnabled = true;
+    private boolean mDoubleTapToSleepEnabled;
     private int mStatusBarHeaderHeight;
     private GestureDetector mDoubleTapGesture;
 
@@ -70,16 +71,18 @@ public class StatusBarWindowView extends FrameLayout {
         mStatusBarHeaderHeight = context
                 .getResources().getDimensionPixelSize(R.dimen.status_bar_header_height);
 
-        mDoubleTapGesture = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDoubleTap(MotionEvent e) {
-                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-                if(pm != null)
-                    pm.goToSleep(e.getEventTime());
-                return true;
-            }
-        });
-
+        mDoubleTapToSleepEnabled = SystemProperties.getBoolean("persist.sys.statusbar.dt2s", true);
+        if (mDoubleTapToSleepEnabled) {
+            mDoubleTapGesture = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+                    if(pm != null)
+                        pm.goToSleep(e.getEventTime());
+                    return true;
+                }
+            });
+        }
     }
 
     @Override
