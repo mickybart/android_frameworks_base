@@ -38,6 +38,7 @@ import com.android.systemui.qs.tiles.DndTile;
 import com.android.systemui.qs.tiles.FastChargeTile;
 import com.android.systemui.qs.tiles.FlashlightTile;
 import com.android.systemui.qs.tiles.HotspotTile;
+import com.android.systemui.qs.tiles.ImmersiveModeTile;
 import com.android.systemui.qs.tiles.IntentTile;
 import com.android.systemui.qs.tiles.LocationTile;
 import com.android.systemui.qs.tiles.LockscreenToggleTile;
@@ -270,6 +271,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         else if (tileSpec.equals("lockscreen")) return  new LockscreenToggleTile(this);
         else if (tileSpec.equals("network_adb")) return new AdbOverNetworkTile(this);
         else if (tileSpec.equals("caffeine")) return new CaffeineTile(this);
+        else if (tileSpec.equals("immersive_mode")) return new ImmersiveModeTile(this);
         else if (tileSpec.startsWith(IntentTile.PREFIX)) return IntentTile.create(this,tileSpec);
         else throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
     }
