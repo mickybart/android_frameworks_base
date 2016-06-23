@@ -26,7 +26,7 @@ import com.android.systemui.R;
 import com.android.systemui.qs.QSTile;
 
 public class ScreenColorTile extends QSTile<QSTile.BooleanState> {
-    private static final String COLOR_FILE = "/sys/devices/platform/mdp.458753/kcal";
+    private static final String COLOR_FILE = "/sys/devices/platform/kcal_ctrl.0/kcal";
     private static final String COLOR_MODE_PROPERTY = "screen.color_isday";
     private static final String COLOR_MODE_DAY_PROPERTY = "persist.screen.color_day";
     private static final String COLOR_MODE_NIGHT_PROPERTY = "persist.screen.color_night";
