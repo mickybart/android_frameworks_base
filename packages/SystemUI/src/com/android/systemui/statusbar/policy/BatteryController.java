@@ -32,6 +32,10 @@ public class BatteryController extends BroadcastReceiver {
     private static final String TAG = "BatteryController";
     private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
 
+    public static final int PERCENTAGE_MODE_OFF = 0;
+    public static final int PERCENTAGE_MODE_INSIDE = 1;
+    public static final int PERCENTAGE_MODE_OUTSIDE = 2;
+
     private final ArrayList<BatteryStateChangeCallback> mChangeCallbacks = new ArrayList<>();
     private final PowerManager mPowerManager;
 
