@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.database.ContentObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -33,8 +32,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -87,7 +84,6 @@ public class BatteryMeterView extends View implements DemoMode,
     private int mLightModeFillColor;
 
     private BatteryTracker mTracker = new BatteryTracker();
-    private final SettingObserver mSettingObserver = new SettingObserver();
 
     public BatteryMeterView(Context context) {
         this(context, null, 0);
@@ -117,7 +113,6 @@ public class BatteryMeterView extends View implements DemoMode,
         levels.recycle();
         colors.recycle();
         atts.recycle();
-        updateShowPercent();
         mWarningString = context.getString(R.string.battery_meter_very_low_overlay_symbol);
         mCriticalLevel = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_criticalBatteryWarningLevel);
@@ -177,9 +172,6 @@ public class BatteryMeterView extends View implements DemoMode,
             mTracker.onReceive(getContext(), sticky);
         }
         mBatteryController.addStateChangedCallback(this);
-        getContext().getContentResolver().registerContentObserver(
-                Settings.System.getUriFor(Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT),
-                false, mSettingObserver);
     }
 
     @Override
@@ -188,7 +180,6 @@ public class BatteryMeterView extends View implements DemoMode,
 
         getContext().unregisterReceiver(mTracker);
         mBatteryController.removeStateChangedCallback(this);
-        getContext().getContentResolver().unregisterContentObserver(mSettingObserver);
     }
 
     public void setBatteryController(BatteryController batteryController) {
@@ -205,6 +196,12 @@ public class BatteryMeterView extends View implements DemoMode,
     public void onPowerSaveChanged() {
         mPowerSaveEnabled = mBatteryController.isPowerSave();
         invalidate();
+    }
+
+    @Override
+    public void onPercentageModeChanged(int percentageMode) {
+        mShowPercent = percentageMode == BatteryController.PERCENTAGE_MODE_INSIDE;
+        postInvalidate();
     }
 
     private static float[] loadBoltPoints(Resources res) {
@@ -228,12 +225,6 @@ public class BatteryMeterView extends View implements DemoMode,
         mWidth = w;
         mWarningTextPaint.setTextSize(h * 0.75f);
         mWarningTextHeight = -mWarningTextPaint.getFontMetrics().ascent;
-    }
-
-    private void updateShowPercent() {
-        mShowPercent = BatteryController.PERCENTAGE_MODE_INSIDE == Settings.System.getInt(
-                getContext().getContentResolver(),
-                Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT, 0);
     }
 
     private int getColorForLevel(int percent) {
@@ -527,18 +518,4 @@ public class BatteryMeterView extends View implements DemoMode,
             }
         }
     }
-
-    private final class SettingObserver extends ContentObserver {
-        public SettingObserver() {
-            super(new Handler());
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            super.onChange(selfChange, uri);
-            updateShowPercent();
-            postInvalidate();
-        }
-    }
-
 }

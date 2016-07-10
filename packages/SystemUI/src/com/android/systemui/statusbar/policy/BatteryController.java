@@ -20,8 +20,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.os.BatteryManager;
+import android.os.Handler;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.io.FileDescriptor;
@@ -36,6 +39,7 @@ public class BatteryController extends BroadcastReceiver {
     public static final int PERCENTAGE_MODE_INSIDE = 1;
     public static final int PERCENTAGE_MODE_OUTSIDE = 2;
 
+    private Context mContext;
     private final ArrayList<BatteryStateChangeCallback> mChangeCallbacks = new ArrayList<>();
     private final PowerManager mPowerManager;
 
@@ -44,8 +48,18 @@ public class BatteryController extends BroadcastReceiver {
     private boolean mCharging;
     private boolean mCharged;
     private boolean mPowerSave;
+    private int mPercentageMode;
+
+    private ContentObserver mSettingObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange) {
+            updatePercentageMode();
+            firePercentageModeChanged();
+        }
+    };
 
     public BatteryController(Context context) {
+        mContext = context;
         mPowerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 
         IntentFilter filter = new IntentFilter();
@@ -53,8 +67,12 @@ public class BatteryController extends BroadcastReceiver {
         filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
         filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGING);
         context.registerReceiver(this, filter);
+        context.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT),
+                false, mSettingObserver);
 
         updatePowerSave();
+        updatePercentageMode();
     }
 
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
@@ -64,11 +82,13 @@ public class BatteryController extends BroadcastReceiver {
         pw.print("  mCharging="); pw.println(mCharging);
         pw.print("  mCharged="); pw.println(mCharged);
         pw.print("  mPowerSave="); pw.println(mPowerSave);
+        pw.print("  mPercentageMode="); pw.println(mPercentageMode);
     }
 
     public void addStateChangedCallback(BatteryStateChangeCallback cb) {
         mChangeCallbacks.add(cb);
         cb.onBatteryLevelChanged(mLevel, mPluggedIn, mCharging);
+        cb.onPercentageModeChanged(mPercentageMode);
     }
 
     public void removeStateChangedCallback(BatteryStateChangeCallback cb) {
@@ -104,6 +124,15 @@ public class BatteryController extends BroadcastReceiver {
         setPowerSave(mPowerManager.isPowerSaveMode());
     }
 
+    public int getPercentageMode() {
+        return mPercentageMode;
+    }
+
+    private void updatePercentageMode() {
+        mPercentageMode = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_SHOW_BATTERY_PERCENT, 0);
+    }
+
     private void setPowerSave(boolean powerSave) {
         if (powerSave == mPowerSave) return;
         mPowerSave = powerSave;
@@ -125,8 +154,17 @@ public class BatteryController extends BroadcastReceiver {
         }
     }
 
+    private void firePercentageModeChanged() {
+        final int N = mChangeCallbacks.size();
+        for (int i = 0; i < N; i++) {
+            mChangeCallbacks.get(i).onPercentageModeChanged(mPercentageMode);
+        }
+    }
+
     public interface BatteryStateChangeCallback {
         void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging);
         void onPowerSaveChanged();
+        void onPercentageModeChanged(int percentageMode);
     }
+
 }

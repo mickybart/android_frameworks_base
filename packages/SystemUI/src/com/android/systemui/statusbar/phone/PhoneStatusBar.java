@@ -75,6 +75,7 @@ import android.util.ArraySet;
 import android.util.DisplayMetrics;
 import android.util.EventLog;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -102,7 +103,6 @@ import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.keyguard.ViewMediatorCallback;
-import com.android.systemui.BatteryLevelTextView;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.DemoMode;
 import com.android.systemui.EventLogConstants;
@@ -162,6 +162,7 @@ import com.android.systemui.volume.VolumeComponent;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -312,6 +313,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     KeyguardBottomAreaView mKeyguardBottomArea;
     boolean mLeaveOpenOnKeyguardHide;
     KeyguardIndicationController mKeyguardIndicationController;
+    TextView mBatteryLevel;
 
     // Keyguard is going away soon.
     private boolean mKeyguardGoingAway;
@@ -807,6 +809,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         R.id.keyguard_indication_text),
                 mKeyguardBottomArea.getLockIcon());
         mKeyguardBottomArea.setKeyguardIndicationController(mKeyguardIndicationController);
+        mBatteryLevel = (TextView) mStatusBarView.findViewById(R.id.battery_level);
 
         // set the inital view visibility
         setAreThereNotifications();
@@ -832,7 +835,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }
             @Override
             public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-                // noop
+                String percentage = NumberFormat.getPercentInstance().format((double) level / 100.0);
+                mBatteryLevel.setText(percentage);
+            }
+
+            @Override
+            public void onPercentageModeChanged(int percentageMode) {
+                boolean batteryLevelVisible = percentageMode == BatteryController.PERCENTAGE_MODE_OUTSIDE;
+                mBatteryLevel.setVisibility(batteryLevelVisible ? View.VISIBLE : View.GONE);
             }
         });
 
@@ -917,8 +927,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mHeader.setBatteryController(mBatteryController);
         ((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
                 mBatteryController);
-        ((BatteryLevelTextView) mStatusBarView.findViewById(R.id.battery_level))
-                .setBatteryController(mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
         mHeader.setNextAlarmController(mNextAlarmController);
 
