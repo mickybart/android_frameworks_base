@@ -420,6 +420,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     }
 
     @Override
+    public void onBatteryStyleChanged(int style, int percentMode) {
+        mBatteryLevelVisible = (style == BatteryController.STYLE_TEXT)
+                || (style != BatteryController.STYLE_GONE
+                && percentMode == BatteryController.PERCENTAGE_MODE_OUTSIDE);
+        updateVisibilities();
+    }
+
+    @Override
     public void onNextAlarmChanged(AlarmManager.AlarmClockInfo nextAlarm) {
         mNextAlarm = nextAlarm;
         if (nextAlarm != null) {
@@ -428,12 +436,6 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mAlarmShowing = nextAlarm != null;
         updateEverything();
         requestCaptureValues();
-    }
-
-    @Override
-    public void onPercentageModeChanged(int percentageMode) {
-        mBatteryLevelVisible = percentageMode == BatteryController.PERCENTAGE_MODE_OUTSIDE;
-        updateVisibilities();
     }
 
     private void updateClickTargets() {

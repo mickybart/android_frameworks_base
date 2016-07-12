@@ -173,8 +173,10 @@ public class KeyguardStatusBarView extends RelativeLayout
     }
 
     @Override
-    public void onPercentageModeChanged(int percentageMode) {
-        mBatteryLevelVisible = percentageMode == BatteryController.PERCENTAGE_MODE_OUTSIDE;
+    public void onBatteryStyleChanged(int style, int percentMode) {
+        mBatteryLevelVisible = (style == BatteryController.STYLE_TEXT)
+                || (style != BatteryController.STYLE_GONE
+                && percentMode == BatteryController.PERCENTAGE_MODE_OUTSIDE);
         updateVisibilities();
     }
 
