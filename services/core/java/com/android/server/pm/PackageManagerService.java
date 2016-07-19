@@ -6193,14 +6193,23 @@ public class PackageManagerService extends IPackageManager.Stub {
     }
 
     private void performBootDexOpt(PackageParser.Package pkg, int curr, int total) {
+        String pkgName = pkg.packageName;
         if (DEBUG_DEXOPT) {
-            Log.i(TAG, "Optimizing app " + curr + " of " + total + ": " + pkg.packageName);
+            Log.i(TAG, "Optimizing app " + curr + " of " + total + ": " + pkgName);
         }
         if (!isFirstBoot()) {
             try {
-                ActivityManagerNative.getDefault().showBootMessage(
-                        mContext.getResources().getString(R.string.android_upgrading_apk,
-                                curr, total), true);
+                String appName;
+                try {
+                    PackageManager pm = mContext.getPackageManager();
+                    ApplicationInfo ai = pm.getApplicationInfo(pkgName, 0);
+                    appName = (String) pm.getApplicationLabel(ai);
+                } catch (Exception e) {
+                    appName = pkgName;
+                }
+                String message = mContext.getResources().getString(
+                        R.string.android_upgrading_apk, curr, total) + "\n" + appName;
+                ActivityManagerNative.getDefault().showBootMessage(message, true);
             } catch (RemoteException e) {
             }
         }
