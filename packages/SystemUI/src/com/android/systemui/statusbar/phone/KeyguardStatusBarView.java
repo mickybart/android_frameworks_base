@@ -47,6 +47,7 @@ public class KeyguardStatusBarView extends RelativeLayout
     private boolean mBatteryCharging;
     private boolean mKeyguardUserSwitcherShowing;
     private boolean mBatteryListening;
+    private boolean mBatteryLevelVisible;
 
     private TextView mCarrierLabel;
     private View mSystemIconsSuperContainer;
@@ -104,7 +105,8 @@ public class KeyguardStatusBarView extends RelativeLayout
         } else if (mMultiUserSwitch.getParent() == this && mKeyguardUserSwitcherShowing) {
             removeView(mMultiUserSwitch);
         }
-        mBatteryLevel.setVisibility(mBatteryCharging ? View.VISIBLE : View.GONE);
+        mBatteryLevel.setVisibility((mBatteryLevelVisible || mBatteryCharging) ?
+                View.VISIBLE : View.GONE);
     }
 
     private void updateSystemIconsLayoutParams() {
@@ -168,6 +170,14 @@ public class KeyguardStatusBarView extends RelativeLayout
     @Override
     public void onPowerSaveChanged() {
         // could not care less
+    }
+
+    @Override
+    public void onBatteryStyleChanged(int style, int percentMode) {
+        mBatteryLevelVisible = (style == BatteryController.STYLE_TEXT)
+                || (style != BatteryController.STYLE_GONE
+                && percentMode == BatteryController.PERCENTAGE_MODE_OUTSIDE);
+        updateVisibilities();
     }
 
     public void setKeyguardUserSwitcher(KeyguardUserSwitcher keyguardUserSwitcher) {

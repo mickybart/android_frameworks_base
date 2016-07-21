@@ -86,6 +86,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     private TextView mBatteryLevel;
     private TextView mAlarmStatus;
 
+    private boolean mBatteryLevelVisible;
     private boolean mShowEmergencyCallsOnly;
     private boolean mAlarmShowing;
     private AlarmManager.AlarmClockInfo mNextAlarm;
@@ -340,7 +341,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
             updateSignalClusterDetachment();
         }
         mEmergencyCallsOnly.setVisibility(mExpanded && mShowEmergencyCallsOnly ? VISIBLE : GONE);
-        mBatteryLevel.setVisibility(mExpanded ? View.VISIBLE : View.GONE);
+        mBatteryLevel.setVisibility((mExpanded || mBatteryLevelVisible) ? View.VISIBLE : View.GONE);
         mSettingsContainer.findViewById(R.id.tuner_icon).setVisibility(
                 TunerService.isTunerEnabled(mContext) ? View.VISIBLE : View.INVISIBLE);
     }
@@ -416,6 +417,14 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
     @Override
     public void onPowerSaveChanged() {
         // could not care less
+    }
+
+    @Override
+    public void onBatteryStyleChanged(int style, int percentMode) {
+        mBatteryLevelVisible = (style == BatteryController.STYLE_TEXT)
+                || (style != BatteryController.STYLE_GONE
+                && percentMode == BatteryController.PERCENTAGE_MODE_OUTSIDE);
+        updateVisibilities();
     }
 
     @Override
