@@ -32,4 +32,10 @@
   <string name="permlab_fakePackageSignature">Change la signature de l\'application</string>
   <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
   <string name="permdesc_fakePackageSignature">Permettre à l\'application de se faire passer pour une autre en contournant le système de sécurité.</string>
+
+  <!-- App Ops -->
+  <string name="app_ops_permission_remember_choice">Se souvenir de mon choix</string>
+  <string name="app_ops_permission_dialog_title">Autorisation</string>
+  <string name="app_ops_permission_dialog_summary"><xliff:g id="app">%1$s</xliff:g> voudrait <xliff:g id="op">%2$s</xliff:g>.</string>
+  <string name="app_ops_su">obtenir l\'accès root</string>
 </resources>

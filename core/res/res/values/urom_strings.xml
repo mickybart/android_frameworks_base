@@ -48,4 +48,9 @@
     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permdesc_fakePackageSignature">Allows the app to pretend to be a different app and trick security systems.</string>
 
+    <!-- App Ops -->
+    <string name="app_ops_permission_remember_choice">Remember my choice</string>
+    <string name="app_ops_permission_dialog_title">Permission</string>
+    <string name="app_ops_permission_dialog_summary"><xliff:g id="app">%1$s</xliff:g> would like to <xliff:g id="op">%2$s</xliff:g>.</string>
+    <string name="app_ops_su">get root access</string>
 </resources>

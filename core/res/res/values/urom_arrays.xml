@@ -31,4 +31,72 @@
         <item>recovery</item>
         <item>bootloader</item>
      </string-array>
+
+     <!-- App Ops -->
+     <string-array name="app_ops_labels">
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item></item>
+         <item>@string/app_ops_su</item>
+     </string-array>
 </resources>

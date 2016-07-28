@@ -521,6 +521,7 @@ public class UserManagerService extends IUserManager.Stub {
             mGuestRestrictions.putBoolean(UserManager.DISALLOW_OUTGOING_CALLS, true);
             mGuestRestrictions.putBoolean(UserManager.DISALLOW_SMS, true);
             mGuestRestrictions.putBoolean(UserManager.DISALLOW_CONFIG_WIFI, true);
+            mGuestRestrictions.putBoolean(UserManager.DISALLOW_SU, true);
         }
     }
 
@@ -1012,6 +1013,7 @@ public class UserManagerService extends IUserManager.Stub {
         writeBoolean(serializer, restrictions, UserManager.DISALLOW_WALLPAPER);
         writeBoolean(serializer, restrictions, UserManager.DISALLOW_SAFE_BOOT);
         writeBoolean(serializer, restrictions, UserManager.ALLOW_PARENT_PROFILE_APP_LINKING);
+        writeBoolean(serializer, restrictions, UserManager.DISALLOW_SU);
         serializer.endTag(null, TAG_RESTRICTIONS);
     }
 
@@ -1144,6 +1146,7 @@ public class UserManagerService extends IUserManager.Stub {
         readBoolean(parser, restrictions, UserManager.DISALLOW_WALLPAPER);
         readBoolean(parser, restrictions, UserManager.DISALLOW_SAFE_BOOT);
         readBoolean(parser, restrictions, UserManager.ALLOW_PARENT_PROFILE_APP_LINKING);
+        readBoolean(parser, restrictions, UserManager.DISALLOW_SU);
     }
 
     private void readBoolean(XmlPullParser parser, Bundle restrictions,
