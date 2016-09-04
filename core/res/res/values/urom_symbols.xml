@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright (C) 2012-2014 The CyanogenMod Project
+ * Copyright (C) 2016 nAOSProm
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<resources>
+  <!-- We don't want to publish private symbols in android.R as part of the
+       SDK.  Instead, put them here. -->
+  <private-symbols package="com.android.internal" />
+
+  <!-- App Ops -->
+  <java-symbol type="id" name="permission_text" />
+  <java-symbol type="id" name="permission_remember_layout" />
+  <java-symbol type="id" name="permission_remember_choice_checkbox" />
+  <java-symbol type="id" name="permission_remember_choice_text" />
+  <java-symbol type="string" name="allow" />
+  <java-symbol type="string" name="deny" />
+  <java-symbol type="string" name="app_ops_permission_dialog_title" />
+  <java-symbol type="string" name="app_ops_permission_dialog_summary" />
+  <java-symbol type="layout" name="permission_confirmation_dialog" />
+  <java-symbol type="array" name="app_ops_labels" />
+</resources>

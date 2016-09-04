@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (C) 2016 nAOSProm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1043,6 +1044,7 @@ public class UserManagerService extends IUserManager.Stub {
                 mGuestRestrictions.putBoolean(UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES, true);
                 mGuestRestrictions.putBoolean(UserManager.DISALLOW_OUTGOING_CALLS, true);
                 mGuestRestrictions.putBoolean(UserManager.DISALLOW_SMS, true);
+                mGuestRestrictions.putBoolean(UserManager.DISALLOW_SU, true);
             }
         }
     }
@@ -3386,6 +3388,7 @@ public class UserManagerService extends IUserManager.Stub {
             if (user != null && !user.isAdmin()) {
                 setUserRestriction(UserManager.DISALLOW_SMS, true, user.id);
                 setUserRestriction(UserManager.DISALLOW_OUTGOING_CALLS, true, user.id);
+                setUserRestriction(UserManager.DISALLOW_SU, true, user.id);
             }
             return user;
         }

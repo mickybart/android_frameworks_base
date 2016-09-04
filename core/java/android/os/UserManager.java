@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2016 nAOSProm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -673,6 +674,18 @@ public class UserManager {
     public static final String EXTRA_USER_ACCOUNT_OPTIONS
             = "android.os.extra.USER_ACCOUNT_OPTIONS";
 
+    /**
+     * Specifies if the user is not allowed to use SU commands.
+     * The default value is <code>false</code>.
+     *
+     * <p/>Key for user restrictions.
+     * <p/>Type: Boolean
+     * @see #setUserRestrictions(Bundle)
+     * @see #getUserRestrictions()
+     * @hide
+     */
+    public static final String DISALLOW_SU = "no_su";
+
     /** @hide */
     public static final int PIN_VERIFICATION_FAILED_INCORRECT = -3;
     /** @hide */
@@ -1250,6 +1263,7 @@ public class UserManager {
             if (user != null && !user.isAdmin()) {
                 mService.setUserRestriction(DISALLOW_SMS, true, user.id);
                 mService.setUserRestriction(DISALLOW_OUTGOING_CALLS, true, user.id);
+                mService.setUserRestriction(DISALLOW_SU, true, user.id);
             }
         } catch (RemoteException re) {
             throw re.rethrowFromSystemServer();

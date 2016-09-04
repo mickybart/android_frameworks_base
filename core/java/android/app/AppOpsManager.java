@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 The Android Open Source Project
+ * Copyright (C) 2016 nAOSProm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,6 +103,13 @@ public class AppOpsManager {
      * with appop permissions, and callers must explicitly check for it and deal with it.
      */
     public static final int MODE_DEFAULT = 3;
+
+    /**
+     * @hide Result from {@link #checkOp}, {@link #noteOp}, {@link #startOp}:
+     * AppOps Service should show a dialog box on screen to get user
+     * permission.
+     */
+    public static final int MODE_ASK = 4;
 
     // when adding one of these:
     //  - increment _NUM_OP
@@ -239,8 +247,10 @@ public class AppOpsManager {
     public static final int OP_GET_ACCOUNTS = 62;
     /** @hide Control whether an application is allowed to run in the background. */
     public static final int OP_RUN_IN_BACKGROUND = 63;
+    /** @hide Superuser. */
+    public static final int OP_SU = 64;
     /** @hide */
-    public static final int _NUM_OP = 64;
+    public static final int _NUM_OP = 65;
 
     /** Access to coarse location information. */
     public static final String OPSTR_COARSE_LOCATION = "android:coarse_location";
@@ -338,6 +348,9 @@ public class AppOpsManager {
     /** @hide Get device accounts. */
     public static final String OPSTR_GET_ACCOUNTS
             = "android:get_accounts";
+    /** @hide Superuser. */
+    public static final String OPSTR_SU
+            = "android:su";
 
     private static final int[] RUNTIME_PERMISSIONS_OPS = {
             // Contacts
@@ -449,6 +462,7 @@ public class AppOpsManager {
             OP_TURN_SCREEN_ON,
             OP_GET_ACCOUNTS,
             OP_RUN_IN_BACKGROUND,
+            OP_SU,
     };
 
     /**
@@ -520,6 +534,7 @@ public class AppOpsManager {
             null,
             OPSTR_GET_ACCOUNTS,
             null,
+            OPSTR_SU
     };
 
     /**
@@ -591,6 +606,7 @@ public class AppOpsManager {
             "TURN_ON_SCREEN",
             "GET_ACCOUNTS",
             "RUN_IN_BACKGROUND",
+            "SU",
     };
 
     /**
@@ -662,6 +678,7 @@ public class AppOpsManager {
             null, // no permission for turning the screen on
             Manifest.permission.GET_ACCOUNTS,
             null, // no permission for running in background
+            null // no standard permission for superuser
     };
 
     /**
@@ -734,6 +751,7 @@ public class AppOpsManager {
             null, // TURN_ON_SCREEN
             null, // GET_ACCOUNTS
             null, // RUN_IN_BACKGROUND
+            UserManager.DISALLOW_SU, // SU
     };
 
     /**
@@ -805,6 +823,7 @@ public class AppOpsManager {
             false, // TURN_ON_SCREEN
             false, // GET_ACCOUNTS
             false, // RUN_IN_BACKGROUND
+            false, // SU
     };
 
     /**
@@ -875,6 +894,7 @@ public class AppOpsManager {
             AppOpsManager.MODE_ALLOWED,  // OP_TURN_ON_SCREEN
             AppOpsManager.MODE_ALLOWED,
             AppOpsManager.MODE_ALLOWED,  // OP_RUN_IN_BACKGROUND
+            AppOpsManager.MODE_ASK, // OP_SU
     };
 
     /**
@@ -949,6 +969,7 @@ public class AppOpsManager {
             false,
             false,
             false,
+            false
     };
 
     /**

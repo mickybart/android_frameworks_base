@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 The Android Open Source Project
+ * Copyright (C) 2016 nAOSProm
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +104,8 @@ public class UserRestrictionsUtils {
             UserManager.DISALLOW_RUN_IN_BACKGROUND,
             UserManager.DISALLOW_DATA_ROAMING,
             UserManager.DISALLOW_SET_USER_ICON,
-            UserManager.DISALLOW_SET_WALLPAPER
+            UserManager.DISALLOW_SET_WALLPAPER,
+	    UserManager.DISALLOW_SU
     });
 
     /**
@@ -129,7 +131,8 @@ public class UserRestrictionsUtils {
             UserManager.DISALLOW_FUN,
             UserManager.DISALLOW_SAFE_BOOT,
             UserManager.DISALLOW_CREATE_WINDOWS,
-            UserManager.DISALLOW_DATA_ROAMING
+            UserManager.DISALLOW_DATA_ROAMING,
+	    UserManager.DISALLOW_SU
     );
 
     /**
