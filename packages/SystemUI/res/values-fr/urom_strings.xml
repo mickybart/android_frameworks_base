@@ -13,4 +13,9 @@
     <string name="qs_tile_network_adb_on">ADB</string>
     <string name="qs_tile_network_adb_off">ADB</string>
     <string name="quick_settings_network_adb_label">ADB connecté</string>
+
+    <!-- QS Night/Day Mode Tile -->
+    <string name="qs_tile_screen_color_day">Jour</string>
+    <string name="qs_tile_screen_color_night">Nuit</string>
+    <string name="quick_settings_screen_color_label">Jour et Nuit</string>
 </resources>

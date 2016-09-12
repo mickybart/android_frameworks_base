@@ -35,5 +35,10 @@
     <string name="qs_tile_immersive_mode_full_screen">Full screen</string>
     <string name="qs_tile_immersive_mode_navbar_hidden">Navigation hidden</string>
     <string name="qs_tile_immersive_mode_status_hidden">Status bar hidden</string>
+
+    <!-- QS Night/Day Mode Tile -->
+    <string name="qs_tile_screen_color_day">Day</string>
+    <string name="qs_tile_screen_color_night">Night</string>
+    <string name="quick_settings_screen_color_label">Day and Night</string>
 </resources>
 
