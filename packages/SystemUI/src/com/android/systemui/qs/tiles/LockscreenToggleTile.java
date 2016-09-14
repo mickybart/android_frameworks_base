@@ -21,7 +21,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
+import android.graphics.drawable.Drawable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.widget.Toast;
 import com.android.internal.logging.MetricsProto.MetricsEvent;
 import com.android.systemui.R;
@@ -90,9 +92,11 @@ public class LockscreenToggleTile extends QSTile<QSTile.BooleanState>
 
     @Override
     protected void handleClick() {
-        mVolatileState = !mVolatileState;
-        applyLockscreenState();
-        refreshState();
+        if (!mKeyguard.isShowing() || !mKeyguard.isSecure()) {
+            mVolatileState = !mVolatileState;
+            applyLockscreenState();
+            refreshState();
+	}
     }
 
     @Override
@@ -112,20 +116,29 @@ public class LockscreenToggleTile extends QSTile<QSTile.BooleanState>
                 || mVolatileState
                 || mKeyguardViewMediator.getKeyguardEnabledInternal();
 
-        state.value = lockscreenEnabled;
-        // state.visible = !mKeyguard.isShowing() || !mKeyguard.isSecure();
-        state.label = mContext.getString(lockscreenEnforced
+        state.label = mHost.getContext().getString(lockscreenEnforced
                 ? R.string.quick_settings_lockscreen_label_enforced
                 : R.string.quick_settings_lockscreen_label);
-        if (lockscreenEnabled) {
-            state.icon = ResourceIcon.get(R.drawable.ic_qs_lock_screen_on);
-            state.contentDescription = mContext.getString(
-                    R.string.accessibility_quick_settings_lock_screen_on);
-        } else {
-            state.icon = ResourceIcon.get(R.drawable.ic_qs_lock_screen_off);
-            state.contentDescription = mContext.getString(
-                    R.string.accessibility_quick_settings_lock_screen_off);
-        }
+        state.contentDescription = mHost.getContext().getString(lockscreenEnabled
+                ? R.string.accessibility_quick_settings_lock_screen_on
+                : R.string.accessibility_quick_settings_lock_screen_off);
+
+        if (mKeyguard.isShowing() && mKeyguard.isSecure()) {
+	    Drawable icon = mHost.getContext().getDrawable(R.drawable.ic_qs_lock_screen_on)
+		    .mutate();
+	    final int disabledColor = mHost.getContext().getColor(R.color.qs_tile_tint_unavailable);
+	    icon.setTint(disabledColor);
+	    state.icon = new DrawableIcon(icon);
+	    state.label = new SpannableStringBuilder().append(state.label,
+                    new ForegroundColorSpan(disabledColor),
+	            SpannableStringBuilder.SPAN_INCLUSIVE_INCLUSIVE);
+	    return;
+	}
+
+        state.value = lockscreenEnabled;
+	state.icon = ResourceIcon.get(lockscreenEnabled
+		? R.drawable.ic_qs_lock_screen_on
+		: R.drawable.ic_qs_lock_screen_off);
     }
 
     @Override
