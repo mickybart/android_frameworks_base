@@ -1329,9 +1329,6 @@ void OpenGLRenderer::setStencilFromClip() {
                 // so we don't want to dirty the current layer, if any
                 drawRegionRects(clipArea.getClipRegion(), paint, false);
             }
-#ifdef LEGACY_BLOB_COMPATIBLE
-            glFlush();
-#endif
             if (resetScissor) mRenderState.scissor().setEnabled(false);
             mSkipOutlineClip = storedSkipOutlineClip;
 
