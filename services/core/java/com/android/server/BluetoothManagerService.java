@@ -1286,7 +1286,10 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                         if (!isNameAndAddressSet()) {
                             Message getMsg = mHandler.obtainMessage(MESSAGE_GET_NAME_AND_ADDRESS);
                             mHandler.sendMessage(getMsg);
-                            if (mGetNameAddressOnly) return;
+                            //if (mGetNameAddressOnly) return;
+                            if (mGetNameAddressOnly) {
+                                Slog.d(TAG,"*** mGetNameAddressOnly = true");
+                            }
                         }
 
                         try {
