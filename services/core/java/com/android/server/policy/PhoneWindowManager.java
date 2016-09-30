@@ -802,6 +802,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     break;
                 case MSG_DISPOSE_INPUT_CONSUMER:
                     disposeInputConsumer((InputConsumer) msg.obj);
+                    break;
                 case MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK:
                     KeyEvent event = (KeyEvent) msg.obj;
                     mQemuHwMainkeysIsLongPress = true;
