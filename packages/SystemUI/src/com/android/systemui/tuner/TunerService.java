@@ -188,7 +188,8 @@ public class TunerService extends SystemUI {
     public void clearAll() {
         // A couple special cases.
         Settings.Global.putString(mContentResolver, DemoMode.DEMO_MODE_ALLOWED, null);
-        Settings.System.putString(mContentResolver, BatteryMeterDrawable.SHOW_PERCENT_SETTING, null);
+        Settings.System.putString(mContentResolver,
+                Settings.Secure.STATUS_BAR_SHOW_BATTERY_PERCENT, null);
         Intent intent = new Intent(DemoMode.ACTION_DEMO);
         intent.putExtra(DemoMode.EXTRA_COMMAND, DemoMode.COMMAND_EXIT);
         mContext.sendBroadcast(intent);
