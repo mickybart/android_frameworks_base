@@ -54,5 +54,11 @@
     <string name="accessibility_quick_settings_usb_tether_changed_off">USB tethering turned off</string>
     <string name="accessibility_quick_settings_usb_tether_changed_on">USB tethering turned on</string>
     <string name="quick_settings_usb_tether_label">USB tethering</string>
+
+    <!-- QS Jack Detection Force Tile -->
+    <string name="qs_tile_jackdetforce_off">Jack unplugged</string>
+    <string name="qs_tile_jackdetforce_on">Jack plugged</string>
+    <string name="quick_settings_jackdetforce_label">Jack detection</string>
+
 </resources>
 
