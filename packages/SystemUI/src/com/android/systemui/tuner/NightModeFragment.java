@@ -79,6 +79,7 @@ public class NightModeFragment extends PreferenceFragment implements Tunable,
         mAutoSwitch.setOnPreferenceChangeListener(this);
         mAdjustTint = (SwitchPreference) findPreference(KEY_ADJUST_TINT);
         mAdjustTint.setOnPreferenceChangeListener(this);
+	mAdjustTint.setEnabled(false);
         mAdjustBrightness = (SwitchPreference) findPreference(KEY_ADJUST_BRIGHTNESS);
         mAdjustBrightness.setOnPreferenceChangeListener(this);
     }
@@ -107,7 +108,6 @@ public class NightModeFragment extends PreferenceFragment implements Tunable,
         mNightModeController.addListener(this);
         TunerService.get(getContext()).addTunable(this, Secure.BRIGHTNESS_USE_TWILIGHT,
                 NightModeController.NIGHT_MODE_ADJUST_TINT);
-        calculateDisabled();
     }
 
     @Override
@@ -128,42 +128,15 @@ public class NightModeFragment extends PreferenceFragment implements Tunable,
             MetricsLogger.action(getContext(),
                     MetricsEvent.ACTION_TUNER_NIGHT_MODE_ADJUST_TINT, value);
             mNightModeController.setAdjustTint(value);
-            postCalculateDisabled();
         } else if (mAdjustBrightness == preference) {
             MetricsLogger.action(getContext(),
                     MetricsEvent.ACTION_TUNER_NIGHT_MODE_ADJUST_BRIGHTNESS, value);
             TunerService.get(getContext()).setValue(Secure.BRIGHTNESS_USE_TWILIGHT,
                     value ? 1 : 0);
-            postCalculateDisabled();
         } else {
             return false;
         }
         return true;
-    }
-
-    private void postCalculateDisabled() {
-        // Post this because its the easiest way to wait for all state to be calculated.
-        getView().post(new Runnable() {
-            @Override
-            public void run() {
-                calculateDisabled();
-            }
-        });
-    }
-
-    private void calculateDisabled() {
-        int enabledCount = (mAdjustTint.isChecked() ? 1 : 0)
-                + (mAdjustBrightness.isChecked() ? 1 : 0);
-        if (enabledCount == 1) {
-            if (mAdjustTint.isChecked()) {
-                mAdjustTint.setEnabled(false);
-            } else {
-                mAdjustBrightness.setEnabled(false);
-            }
-        } else {
-            mAdjustTint.setEnabled(true);
-            mAdjustBrightness.setEnabled(true);
-        }
     }
 
     @Override
@@ -171,8 +144,8 @@ public class NightModeFragment extends PreferenceFragment implements Tunable,
         if (Secure.BRIGHTNESS_USE_TWILIGHT.equals(key)) {
             mAdjustBrightness.setChecked(newValue != null && Integer.parseInt(newValue) != 0);
         } else if (NightModeController.NIGHT_MODE_ADJUST_TINT.equals(key)) {
-            // Default on.
-            mAdjustTint.setChecked(newValue == null || Integer.parseInt(newValue) != 0);
+            // Default off.
+            mAdjustTint.setChecked(newValue != null && Integer.parseInt(newValue) != 0);
         }
     }
 

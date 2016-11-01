@@ -19,8 +19,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.opengl.Matrix;
+import android.os.SystemProperties;
 import android.provider.Settings.Secure;
 import android.util.MathUtils;
+import com.android.systemui.qs.tiles.FileUtils;
 import com.android.systemui.tuner.TunerService;
 
 import java.util.ArrayList;
@@ -55,6 +57,13 @@ public class NightModeController implements TunerService.Tunable {
         0, 0, 0, 1,
     };
 
+    // Kcal
+    private static final String COLOR_FILE = "/sys/devices/platform/kcal_ctrl.0/kcal";
+    private static final String COLOR_MODE_PROPERTY = "screen.color_isday";
+    private static final String COLOR_MODE_DAY_PROPERTY = "persist.screen.color_day";
+    private static final String COLOR_MODE_NIGHT_PROPERTY = "persist.screen.color_night";
+    private static final String COLOR_MODE_DEFAULT_VALUE = "255 255 255";
+
     private final ArrayList<Listener> mListeners = new ArrayList<>();
 
     private final Context mContext;
@@ -81,6 +90,29 @@ public class NightModeController implements TunerService.Tunable {
         mUpdateMatrix = updateMatrix;
         TunerService.get(mContext).addTunable(this, NIGHT_MODE_ADJUST_TINT,
                 COLOR_MATRIX_CUSTOM_VALUES, Secure.TWILIGHT_MODE);
+	updateListening(true);
+    }
+
+    private void updateScreenColorMode() {
+	boolean isNight = mIsNight;
+
+	// get current state
+	String strMode = TunerService.get(mContext).getValue(Secure.TWILIGHT_MODE);
+	if (strMode != null) {
+	    int mode = Integer.parseInt(strMode);
+	    isNight = ( mode == Secure.TWILIGHT_MODE_LOCKED_ON || 
+			mode == Secure.TWILIGHT_MODE_AUTO_OVERRIDE_ON ||
+			mIsNight );
+	}
+
+	// update state
+        if(FileUtils.writeLine(COLOR_FILE, 
+                isNight ? SystemProperties.get(COLOR_MODE_NIGHT_PROPERTY, COLOR_MODE_DEFAULT_VALUE) : 
+		          SystemProperties.get(COLOR_MODE_DAY_PROPERTY, COLOR_MODE_DEFAULT_VALUE))) {
+
+            //TODO: update Settings project to remove this property in the futur (used on 6.0 Night/Day mode implementation)
+            SystemProperties.set(COLOR_MODE_PROPERTY, isNight ? "false" : "true");
+        }
     }
 
     public void setNightMode(boolean isNight) {
@@ -121,18 +153,15 @@ public class NightModeController implements TunerService.Tunable {
     public void addListener(Listener listener) {
         mListeners.add(listener);
         listener.onNightModeChanged();
-        updateListening();
     }
 
     public void removeListener(Listener listener) {
         mListeners.remove(listener);
-        updateListening();
     }
 
-    private void updateListening() {
-        boolean shouldListen = mListeners.size() != 0 || (mUpdateMatrix && mAdjustTint);
-        if (shouldListen == mListening) return;
-        mListening = shouldListen;
+    private void updateListening(boolean register) {
+        if (register == mListening) return;
+        mListening = register;
         if (mListening) {
             mContext.registerReceiver(mReceiver, new IntentFilter(ACTION_TWILIGHT_CHANGED));
         } else {
@@ -162,11 +191,11 @@ public class NightModeController implements TunerService.Tunable {
             mCustomMatrix = newValue != null ? toValues(newValue) : null;
             updateCurrentMatrix();
         } else if (NIGHT_MODE_ADJUST_TINT.equals(key)) {
-            mAdjustTint = newValue == null || Integer.parseInt(newValue) != 0;
-            updateListening();
+            mAdjustTint = newValue != null && Integer.parseInt(newValue) != 0;
             updateCurrentMatrix();
         } else if (Secure.TWILIGHT_MODE.equals(key)) {
             mIsAuto = newValue != null && Integer.parseInt(newValue) >= Secure.TWILIGHT_MODE_AUTO;
+	    updateScreenColorMode();
         }
     }
 
@@ -195,6 +224,7 @@ public class NightModeController implements TunerService.Tunable {
             if (ACTION_TWILIGHT_CHANGED.equals(intent.getAction())) {
                 updateNightMode(intent);
                 updateCurrentMatrix();
+		updateScreenColorMode();
                 for (int i = 0; i < mListeners.size(); i++) {
                     mListeners.get(i).onNightModeChanged();
                 }

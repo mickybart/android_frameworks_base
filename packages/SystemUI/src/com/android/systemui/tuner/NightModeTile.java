@@ -43,12 +43,6 @@ public class NightModeTile extends QSTile<QSTile.State> implements NightModeCont
     }
 
     @Override
-    public boolean isAvailable() {
-        return Prefs.getBoolean(mContext, Key.QS_NIGHT_ADDED, false)
-                && TunerService.isTunerEnabled(mContext);
-    }
-
-    @Override
     public void setListening(boolean listening) {
         if (listening) {
             mNightModeController.addListener(this);
@@ -82,11 +76,11 @@ public class NightModeTile extends QSTile<QSTile.State> implements NightModeCont
 
     @Override
     protected void handleUpdateState(State state, Object arg) {
-        // TODO: Right now this is just a dropper, needs an actual night icon.
         boolean enabled = mNightModeController.isEnabled();
-        state.icon = ResourceIcon.get(enabled ? R.drawable.ic_night_mode
-                : R.drawable.ic_night_mode_disabled);
-        state.label = mContext.getString(R.string.night_mode);
+	state.icon = ResourceIcon.get(enabled ?
+                R.drawable.ic_qs_screen_color_night : R.drawable.ic_qs_screen_color_day);
+        state.label = mContext.getString(enabled
+                ? R.string.qs_tile_screen_color_night : R.string.qs_tile_screen_color_day);
         state.contentDescription = mContext.getString(R.string.night_mode);
     }
 

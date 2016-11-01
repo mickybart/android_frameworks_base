@@ -23,8 +23,10 @@
         android:title="@string/night_mode"
         android:fragment="com.android.systemui.tuner.NightModeFragment" />
 
+    <!--
     <com.android.systemui.tuner.CalibratePreference
         android:key="calibrate"
-        android:title="@string/calibrate_display" />
+	android:title="@string/calibrate_display" />
+    -->
 
 </PreferenceScreen>

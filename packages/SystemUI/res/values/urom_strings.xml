@@ -39,7 +39,6 @@
     <!-- QS Night/Day Mode Tile -->
     <string name="qs_tile_screen_color_day">Day</string>
     <string name="qs_tile_screen_color_night">Night</string>
-    <string name="quick_settings_screen_color_label">Day and Night</string>
 
     <!-- QS Sync Tile -->
     <string name="quick_settings_sync_label">Sync</string>
