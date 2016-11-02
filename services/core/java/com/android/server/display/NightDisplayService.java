@@ -31,8 +31,10 @@ import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.opengl.Matrix;
+import android.os.FileUtils;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings.Secure;
 import android.util.MathUtils;
@@ -45,6 +47,8 @@ import com.android.server.twilight.TwilightListener;
 import com.android.server.twilight.TwilightManager;
 import com.android.server.twilight.TwilightState;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -78,6 +82,14 @@ public final class NightDisplayService extends SystemService
     }
 
     /**
+     * Kcal driver
+     */
+    private static final String COLOR_FILE = "/sys/devices/platform/kcal_ctrl.0/kcal";
+    private static final String COLOR_MODE_DAY_PROPERTY = "persist.screen.color_day";
+    private static final String COLOR_MODE_NIGHT_PROPERTY = "persist.screen.color_night";
+    private static final String COLOR_MODE_DEFAULT_VALUE = "255 255 255";
+
+    /**
      * Evaluator used to animate color matrix transitions.
      */
     private static final ColorMatrixEvaluator COLOR_MATRIX_EVALUATOR = new ColorMatrixEvaluator();
@@ -92,9 +104,11 @@ public final class NightDisplayService extends SystemService
     private ValueAnimator mColorMatrixAnimator;
     private Boolean mIsActivated;
     private AutoMode mAutoMode;
+    private File mKcal;
 
     public NightDisplayService(Context context) {
         super(context);
+	mKcal = new File(COLOR_FILE);
         mHandler = new Handler(Looper.getMainLooper());
     }
 
@@ -224,6 +238,19 @@ public final class NightDisplayService extends SystemService
             }
 
             mIsActivated = activated;
+
+	    //Prefer Kcal driver if available
+	    if (mKcal.exists()) {
+		try {
+                    FileUtils.stringToFile(mKcal,
+                        mIsActivated ? SystemProperties.get(COLOR_MODE_NIGHT_PROPERTY, COLOR_MODE_DEFAULT_VALUE)
+                                     : SystemProperties.get(COLOR_MODE_DAY_PROPERTY, COLOR_MODE_DEFAULT_VALUE));
+		} catch (IOException e) {
+		}
+                return;
+	    }
+
+	    //Fallback to DTM method
 
             // Cancel the old animator if still running.
             if (mColorMatrixAnimator != null) {
