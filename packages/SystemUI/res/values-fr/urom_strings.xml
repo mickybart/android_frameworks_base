@@ -14,11 +14,6 @@
     <string name="qs_tile_network_adb_off">ADB</string>
     <string name="quick_settings_network_adb_label">ADB connecté</string>
 
-    <!-- QS Night/Day Mode Tile -->
-    <string name="qs_tile_screen_color_day">Jour</string>
-    <string name="qs_tile_screen_color_night">Nuit</string>
-    <string name="quick_settings_screen_color_label">Jour et Nuit</string>
-
     <!-- QS Jack Detection Force Tile -->
     <string name="qs_tile_jackdetforce_off">Jack débranché</string>
     <string name="qs_tile_jackdetforce_on">Jack branché</string>
