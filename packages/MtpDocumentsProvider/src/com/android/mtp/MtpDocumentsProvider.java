@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.Exception;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +135,7 @@ public class MtpDocumentsProvider extends DocumentsProvider {
         // TODO: Mount AppFuse on demands.
         try {
             mAppFuse.mount(getContext().getSystemService(StorageManager.class));
-        } catch (IOException error) {
+        } catch (Exception error) {
             Log.e(TAG, "Failed to start app fuse.", error);
             return false;
         }
@@ -165,7 +166,7 @@ public class MtpDocumentsProvider extends DocumentsProvider {
         // TODO: Mount AppFuse on demands.
         try {
             mAppFuse.mount(storageManager);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, "Failed to start app fuse.", e);
             return false;
         }
