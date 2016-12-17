@@ -50,7 +50,6 @@ import com.android.systemui.qs.tiles.CellularTile;
 import com.android.systemui.qs.tiles.ColorInversionTile;
 import com.android.systemui.qs.tiles.DataSaverTile;
 import com.android.systemui.qs.tiles.DndTile;
-import com.android.systemui.qs.tiles.FastChargeTile;
 import com.android.systemui.qs.tiles.FlashlightTile;
 import com.android.systemui.qs.tiles.HotspotTile;
 import com.android.systemui.qs.tiles.ImmersiveModeTile;
@@ -444,7 +443,6 @@ public class QSTileHost implements QSTile.Host, Tunable {
         else if (tileSpec.equals("sync")) return new SyncTile(this);
         else if (tileSpec.equals("usb_tether")) return new UsbTetherTile(this);
         // Intent tiles.
-        else if (tileSpec.equals("fastcharge")) return new FastChargeTile(this);
         else if (tileSpec.equals("lockscreen")) return  new LockscreenToggleTile(this);
         else if (tileSpec.equals("network_adb")) return new AdbOverNetworkTile(this);
         else if (tileSpec.equals("caffeine")) return new CaffeineTile(this);
