@@ -49,16 +49,36 @@ public class BatteryTile extends QSTile<QSTile.State> implements BatteryControll
 
     private final BatteryController mBatteryController;
     private final BatteryDetail mBatteryDetail = new BatteryDetail();
+    private static final String FAST_CHARGE_FILE = "/sys/kernel/fast_charge/force_fast_charge";
 
     private int mLevel;
     private boolean mPowerSave;
     private boolean mCharging;
     private boolean mDetailShown;
     private boolean mPluggedIn;
+    private boolean mFastChargeSupported;
+    private boolean mFastCharge;
 
     public BatteryTile(Host host) {
         super(host);
         mBatteryController = host.getBatteryController();
+        mFastChargeSupported = (FileUtils.readOneLine(FAST_CHARGE_FILE) != null);
+        mFastCharge = mFastChargeSupported && isFastChargeOn();
+    }
+
+    private boolean isFastChargeOn() {
+        String fastChargeState = FileUtils.readOneLine(FAST_CHARGE_FILE);
+        return (fastChargeState != null) && fastChargeState.contentEquals("1");
+    }
+    
+    private void setFastCharge(boolean on) {
+        if (FileUtils.writeLine(FAST_CHARGE_FILE, on ? "1" : "0")) {
+            mFastCharge = on;
+            refreshState(null);
+            if (mDetailShown) {
+                mBatteryDetail.postBindView();
+            }
+        }
     }
 
     @Override
@@ -209,6 +229,10 @@ public class BatteryTile extends QSTile<QSTile.State> implements BatteryControll
             ((ImageView) mCurrentView.findViewById(android.R.id.icon)).setImageDrawable(mDrawable);
             Checkable checkbox = (Checkable) mCurrentView.findViewById(android.R.id.toggle);
             checkbox.setChecked(mPowerSave);
+            if (mFastChargeSupported) {
+                Checkable fastcharge_checkbox = (Checkable) mCurrentView.findViewById(R.id.fastcharge_toggle);
+                fastcharge_checkbox.setChecked(mFastCharge);
+            }
             BatteryInfo.getBatteryInfo(mContext, new BatteryInfo.Callback() {
                 @Override
                 public void onBatteryInfoLoaded(BatteryInfo info) {
@@ -221,13 +245,26 @@ public class BatteryTile extends QSTile<QSTile.State> implements BatteryControll
                     (TextView) mCurrentView.findViewById(android.R.id.title);
             final TextView batterySaverSummary =
                     (TextView) mCurrentView.findViewById(android.R.id.summary);
+            final TextView fastChargeTitle =
+                    (TextView) mCurrentView.findViewById(R.id.fastcharge_title);
             if (mCharging) {
+                //switch container
                 mCurrentView.findViewById(R.id.switch_container).setAlpha(.7f);
                 batterySaverTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                 batterySaverTitle.setText(R.string.battery_detail_charging_summary);
                 mCurrentView.findViewById(android.R.id.toggle).setVisibility(View.GONE);
                 mCurrentView.findViewById(R.id.switch_container).setClickable(false);
+                //fastcharge switch container
+                if (mFastChargeSupported) {
+                    mCurrentView.findViewById(R.id.fastcharge_switch_container).setAlpha(.7f);
+                    fastChargeTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                    fastChargeTitle.setText(mFastCharge ? R.string.qs_tile_fastcharge_on : R.string.qs_tile_fastcharge_off);
+                    mCurrentView.findViewById(R.id.fastcharge_toggle).setVisibility(View.GONE);
+                    mCurrentView.findViewById(R.id.fastcharge_switch_container).setClickable(false);
+                } else
+                    mCurrentView.findViewById(R.id.fastcharge_switch_container).setVisibility(View.GONE);
             } else {
+                //switch container
                 mCurrentView.findViewById(R.id.switch_container).setAlpha(1);
                 batterySaverTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 batterySaverTitle.setText(R.string.battery_detail_switch_title);
@@ -235,6 +272,16 @@ public class BatteryTile extends QSTile<QSTile.State> implements BatteryControll
                 mCurrentView.findViewById(android.R.id.toggle).setVisibility(View.VISIBLE);
                 mCurrentView.findViewById(R.id.switch_container).setClickable(true);
                 mCurrentView.findViewById(R.id.switch_container).setOnClickListener(this);
+                //fastcharge switch container
+                if (mFastChargeSupported) {
+                    mCurrentView.findViewById(R.id.fastcharge_switch_container).setAlpha(1);
+                    fastChargeTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                    fastChargeTitle.setText(R.string.qs_tile_fastcharge);
+                    mCurrentView.findViewById(R.id.fastcharge_toggle).setVisibility(View.VISIBLE);
+                    mCurrentView.findViewById(R.id.fastcharge_switch_container).setClickable(true);
+                    mCurrentView.findViewById(R.id.fastcharge_switch_container).setOnClickListener(this);
+                } else
+                    mCurrentView.findViewById(R.id.fastcharge_switch_container).setVisibility(View.GONE);
             }
         }
 
@@ -257,7 +304,10 @@ public class BatteryTile extends QSTile<QSTile.State> implements BatteryControll
 
         @Override
         public void onClick(View v) {
-            mBatteryController.setPowerSaveMode(!mPowerSave);
+            if (mCurrentView.findViewById(R.id.fastcharge_switch_container) == v)
+                setFastCharge(!mFastCharge);
+            else
+                mBatteryController.setPowerSaveMode(!mPowerSave);
         }
 
         @Override
