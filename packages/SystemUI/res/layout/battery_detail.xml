@@ -51,14 +51,14 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:attr/listDivider"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="16dp" />
 
     <RelativeLayout
         android:id="@+id/switch_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true">
 
@@ -95,6 +95,59 @@
 
         <Switch
             android:id="@android:id/toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="16dp"
+            android:clickable="false"
+            android:textAppearance="@style/TextAppearance.QS.DetailHeader" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/fastcharge_switch_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true">
+
+        <ImageView
+            android:id="@+id/fastcharge_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="32dp"
+            android:src="@drawable/ic_qs_fastcharge" />
+
+        <TextView
+            android:id="@+id/fastcharge_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/fastcharge_toggle"
+            android:layout_toEndOf="@+id/fastcharge_icon"
+            android:textAppearance="@style/TextAppearance.QS.DetailItemPrimary"
+            android:text="@string/qs_tile_fastcharge" />
+
+        <TextView
+            android:id="@+id/fastcharge_summary"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fastcharge_title"
+            android:layout_toStartOf="@+id/fastcharge_toggle"
+            android:layout_toEndOf="@+id/fastcharge_icon"
+            android:textAppearance="@style/TextAppearance.QS.DetailItemSecondary"
+            android:text="@string/qs_tile_fastcharge_1a" />
+
+        <Switch
+            android:id="@+id/fastcharge_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
