@@ -483,6 +483,9 @@ public class OpaLayout extends FrameLayout implements ButtonDispatcher.ButtonInt
         mHome = (KeyButtonView) this.findViewById(R.id.home_button);
 
         this.setOpaEnabled(true);
+        //temporary fix to prevent NPE in startDiamondAnimation
+        //TODO investigate why setVertical is not called
+        this.setVertical(true);
     }
 
     public boolean onInterceptTouchEvent(MotionEvent ev) {
