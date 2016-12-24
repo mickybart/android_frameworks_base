@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -28,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.systemui.BatteryMeterDrawable;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.Interpolators;
 import com.android.systemui.R;
@@ -36,6 +38,7 @@ import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcher;
 import com.android.systemui.statusbar.policy.UserInfoController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
+import com.android.systemui.tuner.TunerService;
 
 import java.text.NumberFormat;
 
@@ -43,7 +46,12 @@ import java.text.NumberFormat;
  * The header group on Keyguard.
  */
 public class KeyguardStatusBarView extends RelativeLayout
-        implements BatteryController.BatteryStateChangeCallback {
+        implements BatteryController.BatteryStateChangeCallback, TunerService.Tunable {
+
+    private static final String STATUS_BAR_SHOW_BATTERY_PERCENT =
+            Settings.Secure.STATUS_BAR_SHOW_BATTERY_PERCENT;
+    private static final String STATUS_BAR_BATTERY_STYLE =
+            Settings.Secure.STATUS_BAR_BATTERY_STYLE;
 
     private boolean mBatteryCharging;
     private boolean mKeyguardUserSwitcherShowing;
@@ -62,6 +70,9 @@ public class KeyguardStatusBarView extends RelativeLayout
     private int mSystemIconsSwitcherHiddenExpandedMargin;
     private int mSystemIconsBaseMargin;
     private View mSystemIconsContainer;
+
+    private boolean mShowBatteryText;
+    private Boolean mForceBatteryText;
 
     public KeyguardStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -165,7 +176,12 @@ public class KeyguardStatusBarView extends RelativeLayout
                 mMultiUserSwitch.setVisibility(View.GONE);
             }
         }
-        mBatteryLevel.setVisibility(mBatteryCharging ? View.VISIBLE : View.GONE);
+        if (mForceBatteryText != null) {
+            mBatteryLevel.setVisibility(mForceBatteryText ? View.VISIBLE : View.GONE);
+        } else {
+            mBatteryLevel.setVisibility(
+                    mBatteryCharging || mShowBatteryText ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void updateSystemIconsLayoutParams() {
@@ -190,9 +206,12 @@ public class KeyguardStatusBarView extends RelativeLayout
         }
         mBatteryListening = listening;
         if (mBatteryListening) {
+            TunerService.get(getContext()).addTunable(this,
+                    STATUS_BAR_SHOW_BATTERY_PERCENT, STATUS_BAR_BATTERY_STYLE);
             mBatteryController.addStateChangedCallback(this);
         } else {
             mBatteryController.removeStateChangedCallback(this);
+            TunerService.get(getContext()).removeTunable(this);
         }
     }
 
@@ -320,5 +339,27 @@ public class KeyguardStatusBarView extends RelativeLayout
     @Override
     public boolean hasOverlappingRendering() {
         return false;
+    }
+
+    @Override
+    public void onTuningChanged(String key, String newValue) {
+        switch (key) {
+            case STATUS_BAR_SHOW_BATTERY_PERCENT:
+                mShowBatteryText = newValue != null && Integer.parseInt(newValue) == 2;
+                break;
+            case STATUS_BAR_BATTERY_STYLE:
+                if (newValue != null) {
+                    final int value = Integer.parseInt(newValue);
+                    if (value == BatteryMeterDrawable.BATTERY_STYLE_TEXT) {
+                        mForceBatteryText = true;
+                    } else if (value == BatteryMeterDrawable.BATTERY_STYLE_HIDDEN) {
+                        mForceBatteryText = false;
+                    } else {
+                        mForceBatteryText = null;
+                    }
+                }
+                break;
+        }
+        updateVisibilities();
     }
 }
