@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2012-2014 The CyanogenMod Project
+     Copyright (c) 2013, The Linux Foundation. All rights reserved.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Names of default profiles. -->
+    <!-- label for item that reboots the phone in phone options dialog -->
+    <string name="global_action_reboot">重新启动</string>
+
+    <!-- Reboot menu -->
+    <!-- Button to reboot the phone, within the Reboot Options dialog -->
+    <string name="reboot_reboot">重新启动</string>
+    <!-- Button to reboot the phone into recovery, within the Reboot Options dialog -->
+    <string name="reboot_recovery">恢复模式</string>
+    <!-- Button to reboot the phone into bootloader, within the Reboot Options dialog -->
+    <string name="reboot_bootloader">引导程序</string>
+    <!-- Button to reboot the phone into download, within the Reboot Options dialog -->
+    <string name="reboot_download">下载模式</string>
+    <!-- Button to soft reboot the device, within the Reboot Options dialog -->
+    <string name="reboot_soft">软重启</string>
+
+    <!-- Title of dialog to confirm rebooting. -->
+    <string name="reboot_title">重新启动</string>
+
+    <!-- Reboot Confirmation Dialog.  When the user chooses to reboot the device, there will
+         be a confirmation dialog.  This is the message. -->
+    <string name="reboot_confirm" product="tablet">您的平板电脑将会重启。</string>
+    <string name="reboot_confirm" product="default">您的手机将会重启。</string>
+
+    <!-- Reboot Progress Dialog. This is shown if the user chooses to reboot the phone. -->
+    <string name="reboot_progress">正在重新启动\u2026</string>
+
+    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permlab_fakePackageSignature">伪装软件包签名</string>
+    <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+    <string name="permdesc_fakePackageSignature">允许应用伪装成其他的应用以欺骗安全系统。</string>
+
+    <!-- App Ops -->
+    <string name="app_ops_permission_remember_choice">记住我的选择</string>
+    <string name="app_ops_permission_dialog_title">权限</string>
+    <string name="app_ops_permission_dialog_summary"><xliff:g id="app">%1$s</xliff:g> 想要获取 <xliff:g id="op">%2$s</xliff:g> 权限。</string>
+    <string name="app_ops_su">取得 root 权限</string>
+</resources>
