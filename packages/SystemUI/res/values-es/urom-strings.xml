@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- QS Fast Charge Tile -->
+    <string name="qs_tile_fastcharge_off">Carga Segura</string>
+    <string name="qs_tile_fastcharge">Carga Rápida</string>
+    <string name="quick_settings_fastcharge_label">Carga Rápida USB</string>
+
+    <!-- QS Night/Day Mode Tile -->
+    <string name="qs_tile_screen_color_day">Día</string>
+    <string name="qs_tile_screen_color_night">Noche</string>
+    <string name="quick_settings_screen_color_label">Día y Noche</string>
+
+    <!-- QS Lockscreen Tile -->
+    <string name="quick_settings_lockscreen_label">Bloqueo de pantalla</string>
+    <string name="quick_settings_lockscreen_label_enforced">Bloqueo de pantalla forzado.</string>
+    <!-- Content description of the lock screen tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_off">Bloqueo de pantalla inactivo.</string>
+    <!-- Content description of the lock screen tile in quick settings when on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_on">Bloqueo de pantalla activo.</string>
+    <!-- Announcement made when lock screen changes to off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_changed_off">Bloqueo de pantalla cambiado a inactivo.</string>
+    <!-- Announcement made when lock screen changes to on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_lock_screen_changed_on">Bloqueo de pantalla cambiado a activo.</string>
+
+    <!-- QS ADB over Network -->
+    <string name="qs_tile_network_adb_on">ADB</string>
+    <string name="qs_tile_network_adb_off">ADB</string>
+    <string name="quick_settings_network_adb_label">ADB sobre red</string>
+
+    <!-- Caffeine Tile -->
+    <string name="quick_settings_caffeine_label">Cafeína</string>
+    <!-- Content description of the caffeine tile in quick settings when off (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_caffeine_off">Habilitar Cafeína</string>
+    <!-- Content description of the caffeine tile in quick settings when on (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_quick_settings_caffeine_on">Deshabilitar Cafeína</string>
+
+    <!-- Immersive Mode tile Tile -->
+    <string name="quick_settings_immersive_mode_label">Modo Inmersivo</string>
+    <string name="qs_tile_immersive_mode_off">Modo Inmersivo</string>
+    <string name="qs_tile_immersive_mode_full_screen">Pantalla completa</string>
+    <string name="qs_tile_immersive_mode_navbar_hidden">Barra de navegacion oculta</string>
+    <string name="qs_tile_immersive_mode_status_hidden">Barra de estado oculta</string>
+    
+    <!-- QS Sync Tile -->
+    <string name="quick_settings_sync_label">Sincronización</string>
+    <string name="accessibility_quick_settings_sync_off">Deshabilitar sincronización</string>
+    <string name="accessibility_quick_settings_sync_on">Habilitar sincronización</string>
+    <string name="accessibility_quick_settings_sync_changed_off">Sincronización deshabilitada</string>
+    <string name="accessibility_quick_settings_sync_changed_on">Sincronización habilitada</string>
+
+    <!-- QS USB tether Tile -->
+    <string name="accessibility_quick_settings_usb_tether_off">Deshabilitar anclaje de USB</string>
+    <string name="accessibility_quick_settings_usb_tether_on">Habilitar anclaje de USB</string>
+    <string name="accessibility_quick_settings_usb_tether_changed_off">Anclaje de USB deshabilitado</string>
+    <string name="accessibility_quick_settings_usb_tether_changed_on">Anclaje de USB habilitado</string>
+    <string name="quick_settings_usb_tether_label">Anclaje de USB</string>
+
+    <!-- QS Jack Detection Force Tile -->
+    <string name="qs_tile_jackdetforce_off">Jack desenchufado</string>
+    <string name="qs_tile_jackdetforce_on">Jack enchufado</string>
+    <string name="quick_settings_jackdetforce_label">Detección del Jack</string>
+
+    <!-- NFC QS tile -->
+    <string name="quick_settings_nfc_label">NFC</string>
+    <string name="accessibility_quick_settings_nfc_off">Deshabilitar NFC</string>
+    <string name="accessibility_quick_settings_nfc_on">Habilitar NFC</string>
+    <string name="accessibility_quick_settings_nfc_changed_off">NFC heshabilitado</string>
+<string name="accessibility_quick_settings_nfc_changed_on">NFC habilitado</string>
+</resources>
+
