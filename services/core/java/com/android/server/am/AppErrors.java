@@ -95,6 +95,8 @@ class AppErrors {
      */
     private final ProcessMap<BadProcessInfo> mBadProcesses = new ProcessMap<>();
 
+    private int systemSuppressWaitCnt = 0;
+
 
     AppErrors(Context context, ActivityManagerService service) {
         mService = service;
@@ -894,6 +896,14 @@ class AppErrors {
 
             if (isSilentANR) {
                 app.kill("bg anr", true);
+                return;
+            }
+
+            if ("system".equals(app.processName) && systemSuppressWaitCnt < 5) {
+                systemSuppressWaitCnt++;
+                Slog.e(TAG, "Suppressing system isn't responding for the " +
+                        systemSuppressWaitCnt + ". time");
+                mService.mServices.scheduleServiceTimeoutLocked(app);
                 return;
             }
 
