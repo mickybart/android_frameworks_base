@@ -149,6 +149,11 @@ final class DefaultPermissionGrantPolicy {
         STORAGE_PERMISSIONS.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
+    private static final Set<String> FAKE_PACKAGE_SIGNATURE = new ArraySet<>();
+    static {
+        FAKE_PACKAGE_SIGNATURE.add(Manifest.permission.FAKE_PACKAGE_SIGNATURE);
+    }
+
     private static final int MSG_READ_DEFAULT_PERMISSION_EXCEPTIONS = 1;
 
     private static final String ACTION_TWINNING =
@@ -723,6 +728,14 @@ final class DefaultPermissionGrantPolicy {
                 grantRuntimePermissionsLPw(gmscorePackage, PHONE_PERMISSIONS, true, userId);
                 grantRuntimePermissionsLPw(gmscorePackage, SMS_PERMISSIONS, true, userId);
                 grantRuntimePermissionsLPw(gmscorePackage, STORAGE_PERMISSIONS, true, userId);
+                // microg
+		grantRuntimePermissionsLPw(gmscorePackage, FAKE_PACKAGE_SIGNATURE, true, userId);
+            }
+
+	    // Google Play Services - microg
+            gmscorePackage = getSystemPackageLPr("com.google.android.gms");
+            if (gmscorePackage != null && doesPackageSupportRuntimePermissions(gmscorePackage)) {
+		grantRuntimePermissionsLPw(gmscorePackage, FAKE_PACKAGE_SIGNATURE, true, userId);
             }
 
             // Google Connectivity Services
@@ -774,6 +787,8 @@ final class DefaultPermissionGrantPolicy {
                 grantRuntimePermissionsLPw(vendingPackage, LOCATION_PERMISSIONS, true, userId);
                 grantRuntimePermissionsLPw(vendingPackage, SMS_PERMISSIONS, true, userId);
 		grantRuntimePermissionsLPw(vendingPackage, STORAGE_PERMISSIONS, true, userId);
+		// microg
+		grantRuntimePermissionsLPw(vendingPackage, FAKE_PACKAGE_SIGNATURE, true, userId);
             }
 
             // Google Calendar
