@@ -3090,6 +3090,7 @@ public class PackageManagerService extends IPackageManager.Stub {
         try {
             if (permissions.contains("android.permission.FAKE_PACKAGE_SIGNATURE")
                     && SystemProperties.getBoolean("persist.sys.fake-signature",false)
+		    && p.applicationInfo.targetSdkVersion > Build.VERSION_CODES.LOLLIPOP_MR1
                     && p.mAppMetaData != null) {
                 String sig = p.mAppMetaData.getString("fake-signature");
                 if (sig != null) {
